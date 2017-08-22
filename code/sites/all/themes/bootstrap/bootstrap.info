@@ -130,8 +130,6 @@ settings[bootstrap_cdn_custom_js] = 'https://cdn.jsdelivr.net/bootstrap/3.3.7/js
 settings[bootstrap_cdn_custom_js_min] = 'https://cdn.jsdelivr.net/bootstrap/3.3.7/js/bootstrap.min.js'
 settings[bootstrap_cdn_jsdelivr_version] = '3.3.7'
 settings[bootstrap_cdn_jsdelivr_theme] = 'bootstrap'
-stylesheets[all][] = 'css/bootstrap_ltr.css'
-scripts[] = 'js/bootstrap_orgin.js'
 
 ; Global
 ; --------------
@@ -141,6 +139,16 @@ settings[toggle_search] = 1
 ; jQuery Update
 ; --------------
 settings[jquery_update_jquery_version] = 2.1
+
+;;;;;;;;;;;;;;;;;;;;;
+;; Stylesheets
+;;;;;;;;;;;;;;;;;;;;;
+stylesheets[all][] = 'css/bootstrap_ltr.css'
+
+;;;;;;;;;;;;;;;;;;;;;
+;; Scripts
+;;;;;;;;;;;;;;;;;;;;;
+scripts[] = 'js/bootstrap_orgin.js'
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Excludes
