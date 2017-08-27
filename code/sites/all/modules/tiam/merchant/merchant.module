@@ -1,0 +1,32 @@
+<?php
+
+/**
+ * Implements hook_permission().
+ */
+function merchant_permission() {
+  return array(
+    'administer merchant' => array(
+      'title' => t('Administer merchant module'),
+    ),
+  );
+}
+
+
+
+/**
+ * Implements hook_menu().
+ */
+function merchant_menu() {
+
+  $items = [];
+
+  $items['admin/merchant'] = [
+    'title' => t('Merchant'),
+    'description' => t('display all merchant list.'),
+    'page callback' => 'merchant_page',
+    'access arguments' => ['administer merchant'],
+    'file' => 'merchant.admin.inc',
+  ];
+
+  return $items;
+}

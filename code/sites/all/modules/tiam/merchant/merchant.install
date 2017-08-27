@@ -1,0 +1,37 @@
+<?php
+function merchant_schema() {
+$schema['tiam_merchant'] = [
+  'description' => 'TODO: please describe this table!',
+  'fields' => [
+    'id' => [
+      'description' => 'TODO: please describe this field!',
+      'type' => 'serial',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+    ],
+    'name' => [
+      'description' => 'TODO: please describe this field!',
+      'type' => 'varchar',
+      'length' => '200',
+      'not null' => TRUE,
+    ],
+    'state' => [
+      'description' => 'TODO: please describe this field!',
+      'type' => 'varchar',
+      'length' => '200',
+      'not null' => TRUE,
+    ],
+    'city' => [
+      'description' => 'TODO: please describe this field!',
+      'type' => 'varchar',
+      'length' => '200',
+      'not null' => TRUE,
+    ],
+  ],
+  'primary key' => ['id'],
+  'indexes' => [
+    'state' => ['state'],
+  ],
+];
+return $schema;
+}

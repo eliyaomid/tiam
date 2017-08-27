@@ -1,0 +1,4 @@
+name = Merchant
+description = Merchant management
+core = 7.x
+package = Tiam
