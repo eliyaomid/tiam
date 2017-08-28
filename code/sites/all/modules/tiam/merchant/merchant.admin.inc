@@ -1,6 +1,6 @@
 <?php
 
-function merchant_page() {
+function merchant_list() {
   
   $header = [
        ['data' => t('id'), 'field' => 'id'],

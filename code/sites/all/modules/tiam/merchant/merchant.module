@@ -23,10 +23,50 @@ function merchant_menu() {
   $items['admin/merchant'] = [
     'title' => t('Merchant'),
     'description' => t('display all merchant list.'),
-    'page callback' => 'merchant_page',
+    'page callback' => 'merchant_list',
     'access arguments' => ['administer merchant'],
     'file' => 'merchant.admin.inc',
   ];
 
+  $items['merchant'] = [
+    'title' => t('Merchant'),
+    'description' => t('display all merchant list.'),
+    'page callback' => 'merchant_list_page',
+    'access arguments' => ['access content'],
+    'menu_name' => 'main-menu',
+    'file' => 'merchant.page.inc',
+  ];
+
   return $items;
+}
+
+
+/**
+ * Implements hook_block_info().
+ */
+
+function merchant_block_info() {
+  $blocks['merchant_list_filter'] = [
+    'info' => t('Merchant list filter search')
+  ];
+
+  return $blocks;
+}
+
+
+/**
+ * Implements hook_block_view().
+ */
+
+function merchant_block_view($delta = '') {
+  $block = [];
+  
+  switch ($delta) {
+    case 'merchant_list_filter':
+      $block['subject'] = t('Search merchant');
+      $block['content'] = drupal_get_form('merchant_list_filter_form');
+      break;
+  }
+
+  return $block;
 }
