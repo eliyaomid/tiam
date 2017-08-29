@@ -34,7 +34,7 @@ function merchant_menu() {
     'page callback' => 'merchant_list_page',
     'access arguments' => ['access content'],
     'menu_name' => 'main-menu',
-    'file' => 'merchant.page.inc',
+    'file' => 'merchant.pages.inc',
   ];
 
   return $items;
