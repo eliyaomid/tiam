@@ -5,9 +5,9 @@
  */
 function merchant_permission() {
   return array(
-    'administer merchant' => array(
-      'title' => t('Administer merchant module'),
-    ),
+    'administer merchant' => [
+      'title' => 'مدیریت پذیرندگان',
+    ],
   );
 }
 
@@ -21,16 +21,26 @@ function merchant_menu() {
   $items = [];
 
   $items['admin/merchant'] = [
-    'title' => t('Merchant'),
-    'description' => t('display all merchant list.'),
+    'title' => 'پذیرندگان',
+    'description' => 'نمایش لیست تمامی پذیرندگان',
     'page callback' => 'merchant_list',
     'access arguments' => ['administer merchant'],
     'file' => 'merchant.admin.inc',
   ];
+  
+  $items['admin/merchant/add'] = [
+    'title' => 'افزودن پذیرنده',
+    'description' => 'افزودن یک پذیرنده',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => ['merchant_add_form'],
+    'access arguments' => ['administer merchant'],
+    'file' => 'merchant.admin.inc',
+    'type' => MENU_LOCAL_ACTION,
+  ];
 
   $items['merchant'] = [
-    'title' => t('Merchant'),
-    'description' => t('display all merchant list.'),
+    'title' => 'پذیرندگان',
+    'description' => 'نمایش لیست تمامی پذیرندگان',
     'page callback' => 'merchant_list_page',
     'access arguments' => ['access content'],
     'menu_name' => 'main-menu',
@@ -47,7 +57,7 @@ function merchant_menu() {
 
 function merchant_block_info() {
   $blocks['merchant_list_filter'] = [
-    'info' => t('Merchant list filter search')
+    'info' => 'جستجوی پذیرندگان'
   ];
 
   return $blocks;
@@ -63,7 +73,7 @@ function merchant_block_view($delta = '') {
   
   switch ($delta) {
     case 'merchant_list_filter':
-      $block['subject'] = t('Search merchant');
+      $block['subject'] = 'جستجوی پذیرندگان';
       $block['content'] = drupal_get_form('merchant_list_filter_form');
       break;
   }

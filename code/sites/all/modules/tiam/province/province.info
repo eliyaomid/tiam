@@ -1,0 +1,4 @@
+name = Province
+description = Province management
+core = 7.x
+package = Tiam

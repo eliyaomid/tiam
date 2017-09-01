@@ -1,37 +1,97 @@
 <?php
 function merchant_schema() {
-$schema['tiam_merchant'] = [
-  'description' => 'TODO: please describe this table!',
-  'fields' => [
-    'id' => [
-      'description' => 'TODO: please describe this field!',
-      'type' => 'serial',
-      'unsigned' => TRUE,
-      'not null' => TRUE,
+
+  $schema['tiam_merchant'] = [
+    'description' => 'TODO: please describe this table!',
+    'fields' => [
+      'id' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'shop_name' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'varchar',
+        'length' => '200',
+        'not null' => TRUE,
+      ],
+      'state' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'city' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'phone_number' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'varchar',
+        'length' => '13',
+        'not null' => FALSE,
+      ],
+      'address' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'text',
+        'not null' => FALSE,
+      ],
+      'map_x' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'map_y' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'description' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'text',
+        'not null' => FALSE,
+      ],
+      'image_fid_1' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'image_fid_2' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+      ],
+      'image_fid_3' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+      ],
+      'image_fid_4' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+      ],
+      'image_fid_5' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+      ],
     ],
-    'name' => [
-      'description' => 'TODO: please describe this field!',
-      'type' => 'varchar',
-      'length' => '200',
-      'not null' => TRUE,
+    'primary key' => ['id'],
+    'indexes' => [
+      'state' => ['state'],
     ],
-    'state' => [
-      'description' => 'TODO: please describe this field!',
-      'type' => 'varchar',
-      'length' => '200',
-      'not null' => TRUE,
-    ],
-    'city' => [
-      'description' => 'TODO: please describe this field!',
-      'type' => 'varchar',
-      'length' => '200',
-      'not null' => TRUE,
-    ],
-  ],
-  'primary key' => ['id'],
-  'indexes' => [
-    'state' => ['state'],
-  ],
-];
-return $schema;
+  ];
+
+  return $schema;
 }

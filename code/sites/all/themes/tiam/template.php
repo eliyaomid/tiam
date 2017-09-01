@@ -46,27 +46,6 @@ function tiam_preprocess_html(&$variables) {
  * Preprocess variables for page template.
  */
 function tiam_preprocess_page(&$variables) {
-
-    /**
-     * insert variables into page template.
-     */
-    if($variables['page']['sidebar_first'] && $variables['page']['sidebar_second']) { 
-        $variables['sidebar_grid_class'] = 'col-md-3';
-        $variables['main_grid_class'] = 'col-md-6';
-    } elseif ($variables['page']['sidebar_first'] || $variables['page']['sidebar_second']) {
-        $variables['sidebar_grid_class'] = 'col-md-4';
-        $variables['main_grid_class'] = 'col-md-8';		
-    } else {
-        $variables['main_grid_class'] = 'col-md-12';			
-    }
-
-    if($variables['page']['header_top_left'] && $variables['page']['header_top_right']) { 
-        $variables['header_top_left_grid_class'] = 'col-md-8';
-        $variables['header_top_right_grid_class'] = 'col-md-4';
-    } elseif ($variables['page']['header_top_right'] || $variables['page']['header_top_left']) {
-        $variables['header_top_left_grid_class'] = 'col-md-12';
-        $variables['header_top_right_grid_class'] = 'col-md-12';		
-    }	
 }
 
 

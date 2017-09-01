@@ -1,0 +1,31 @@
+<?php
+function province_schema() {
+
+  $schema['tiam_province'] = [
+    'description' => 'TODO: please describe this table!',
+    'fields' => [
+      'id' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'name' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'varchar',
+        'length' => '30',
+        'not null' => TRUE,
+      ],
+      'parent' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+
+  return $schema;
+}

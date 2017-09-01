@@ -143,7 +143,7 @@ settings[jquery_update_jquery_version] = 2.1
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Stylesheets
 ;;;;;;;;;;;;;;;;;;;;;
-stylesheets[all][] = 'css/bootstrap_ltr.css'
+stylesheets[all][] = 'css/bootstrap.css'
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Scripts

@@ -1,0 +1,32 @@
+<?php
+
+/**
+ * Implements hook_permission().
+ */
+function province_permission() {
+  return [
+    'administer merchant' => [
+      'title' => t('Administer province module'),
+    ],
+  ];
+}
+
+function province_city($state_id) {
+  
+  $all_city_list = [
+    '0' => 'همه'    
+  ];
+  if($state_id) {
+    $all_city_query = db_select('tiam_province', 'tp')
+      ->fields('tp', ['id', 'name']);
+    if($state_id) {
+      $all_city_query->condition('parent', $state_id);
+    }
+    $all_city_result = $all_city_query->execute()
+      ->fetchAll();
+    foreach ($all_city_result as $city) {
+      $all_city_list[$city->id] = $city->name;
+    }
+  }
+  return $all_city_list;
+}
