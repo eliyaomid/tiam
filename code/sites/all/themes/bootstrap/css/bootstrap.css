@@ -266,6 +266,12 @@ th {
   src: url('../fonts/glyphicons-halflings-regular.eot');
   src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff2') format('woff2'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
 }
+@font-face {
+  font-family: 'BYekan';
+
+  src: url('../fonts/BYekan.eot');
+  src: url('../fonts/BYekan.eot?#iefix') format('embedded-opentype'), url('../fonts/BYekan.woff') format('woff'), url('../fonts/BYekan.ttf') format('truetype'), url('../fonts/BYekan.svg#BYekan') format('svg');
+}
 .glyphicon {
   position: relative;
   top: 1px;
@@ -4176,7 +4182,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 }
 @media (min-width: 768px) {
   .navbar-header {
-    float: right;
+    float: left;
   }
 }
 .navbar-collapse {
@@ -4353,11 +4359,11 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 }
 @media (min-width: 768px) {
   .navbar-nav {
-    float: right;
+    float: left;
     margin: 0;
   }
   .navbar-nav > li {
-    float: right;
+    float: left;
   }
   .navbar-nav > li > a {
     padding-top: 15px;
