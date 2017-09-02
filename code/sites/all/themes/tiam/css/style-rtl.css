@@ -76,3 +76,7 @@ select.form-control {
     float: right;
   }
 }
+
+th {
+    text-align: right;
+}

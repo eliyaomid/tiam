@@ -28,6 +28,18 @@ function merchant_schema() {
         'unsigned' => TRUE,
         'not null' => TRUE,
       ],
+      'group' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'sub_group' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
       'phone_number' => [
         'description' => 'TODO: please describe this field!',
         'type' => 'varchar',
@@ -61,36 +73,68 @@ function merchant_schema() {
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
+        'default' => 0,
       ],
       'image_fid_2' => [
         'description' => 'TODO: please describe this field!',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => FALSE,
+        'default' => 0,
       ],
       'image_fid_3' => [
         'description' => 'TODO: please describe this field!',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => FALSE,
+        'default' => 0,
       ],
       'image_fid_4' => [
         'description' => 'TODO: please describe this field!',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => FALSE,
+        'default' => 0,
       ],
       'image_fid_5' => [
         'description' => 'TODO: please describe this field!',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => FALSE,
+        'default' => 0,
       ],
     ],
     'primary key' => ['id'],
     'indexes' => [
+      'city' => ['city'],
       'state' => ['state'],
     ],
+  ];
+  
+  $schema['tiam_merchant_group'] = [
+    'description' => 'TODO: please describe this table!',
+    'fields' => [
+      'id' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'name' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'varchar',
+        'length' => '30',
+        'not null' => TRUE,
+      ],
+      'parent' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+    ],
+    'primary key' => ['id'],
   ];
 
   return $schema;

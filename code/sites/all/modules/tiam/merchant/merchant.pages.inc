@@ -7,6 +7,7 @@ function merchant_list_page() {
     ['data' => 'نام فروشگاه', 'field' => 'shop_name'],
     ['data' => 'استان', 'field' => 'state'],
     ['data' => 'شهرستان', 'field' => 'city'],
+    ['data' => 'گروه', 'field' => 'sub_group'],
     ['data' => 'شماره تماس'],
     ['data' => 'آدرس'],
     ['data' => 'جزئیات'],
@@ -15,8 +16,10 @@ function merchant_list_page() {
           ->fields('tm', ['id', 'shop_name', 'phone_number', 'address']);
   $merchant_list_query->innerJoin('tiam_province', 'tps', 'tm.state=tps.id');
   $merchant_list_query->innerJoin('tiam_province', 'tpc', 'tm.city=tpc.id');
+  $merchant_list_query->innerJoin('tiam_merchant_group', 'tmsg', 'tm.sub_group=tmsg.id');
   $merchant_list = $merchant_list_query->fields('tps', ['id', 'name'])
           ->fields('tpc', ['id', 'name'])
+          ->fields('tmsg', ['id', 'name'])
           ->extend('TableSort')
           ->orderByHeader($header);
   if(isset($_GET['state'])) {
@@ -31,8 +34,9 @@ function merchant_list_page() {
     $rows[] = [
       ['data' => $merchant->id],
       ['data' => $merchant->shop_name],
-      ['data' => $merchant->name ? $merchant->name:''],
-      ['data' => $merchant->tpc_name ? $merchant->tpc_name:''],
+      ['data' => $merchant->name],
+      ['data' => $merchant->tpc_name],
+      ['data' => $merchant->tmsg_name],
       ['data' => $merchant->phone_number],
       ['data' => $merchant->address],
       l('مشاهده جزئیات', url('merchant/'.$merchant->id)),

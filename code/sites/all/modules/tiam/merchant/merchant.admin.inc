@@ -7,24 +7,36 @@ function merchant_list() {
     ['data' => 'نام فروشگاه', 'field' => 'shop_name'],
     ['data' => 'استان', 'field' => 'state'],
     ['data' => 'شهرستان', 'field' => 'city'],
+    ['data' => 'گروه', 'field' => 'group'],
+    ['data' => 'زیرگروه', 'field' => 'sub_group'],
     ['data' => 'شماره تماس'],
     ['data' => 'آدرس'],
     ['data' => 'جزئیات'],
   ];
-  $merchant_list = db_select('tiam_merchant', 'tm')
-    ->fields('tm', ['id', 'shop_name', 'state', 'city', 'phone_number', 'address'])
-    ->extend('TableSort')
-    ->orderByHeader($header)
-    ->extend('PagerDefault')
-    ->limit(10)
-    ->execute();
+  $merchant_list_query = db_select('tiam_merchant', 'tm')
+          ->fields('tm', ['id', 'shop_name', 'state', 'city', 'phone_number', 'address']);
+  $merchant_list_query->innerJoin('tiam_province', 'tps', 'tm.state=tps.id');
+  $merchant_list_query->innerJoin('tiam_province', 'tpc', 'tm.city=tpc.id');
+  $merchant_list_query->innerJoin('tiam_merchant_group', 'tmg', 'tm.group=tmg.id');
+  $merchant_list_query->innerJoin('tiam_merchant_group', 'tmsg', 'tm.sub_group=tmsg.id');
+  $merchant_list = $merchant_list_query->fields('tps', ['id', 'name'])
+          ->fields('tpc', ['id', 'name'])
+          ->fields('tmg', ['id', 'name'])
+          ->fields('tmsg', ['id', 'name'])
+          ->extend('TableSort')
+          ->orderByHeader($header)
+          ->extend('PagerDefault')
+          ->limit(10)
+          ->execute();
   $rows = [];
   foreach($merchant_list as $merchant) {
     $rows[] = [
       ['data' => $merchant->id],
       ['data' => $merchant->shop_name],
-      ['data' => $merchant->state],
-      ['data' => $merchant->city],
+      ['data' => $merchant->name],
+      ['data' => $merchant->tpc_name],
+      ['data' => $merchant->tmg_name],
+      ['data' => $merchant->tmsg_name],
       ['data' => $merchant->phone_number],
       ['data' => $merchant->address],
       l('ویرایش', url('admin/merchant/edit/'.$merchant->id, ['absolute' => true])),
@@ -44,28 +56,46 @@ function merchant_list() {
 function merchant_add_form($form, &$form_state, $id=0) {
   
   $all_state = db_select('tiam_province', 'tp')
-    ->fields('tp', ['id', 'name'])
-    ->condition('parent', 0)
-    ->execute()
-    ->fetchAllAssoc('id', PDO::FETCH_ASSOC);
+          ->fields('tp', ['id', 'name'])
+          ->condition('parent', 0)
+          ->execute()
+          ->fetchAll();
   
   $all_state_option = [];
   foreach($all_state as $state) {
-    $all_state_option[$state['id']] = $state['name']; 
+    $all_state_option[$state->id] = $state->name;
   }
+  
+  $all_group = db_select('tiam_merchant_group', 'tmg')
+          ->fields('tmg', ['id', 'name'])
+          ->condition('parent', 0)
+          ->execute()
+          ->fetchAll();
+  
+  $all_group_option = [];
+  foreach($all_group as $group) {
+    $all_group_option[$group->id] = $group->name;
+  }
+  
   $merchant = [];
   if($id) {
     $merchant = db_select('tiam_merchant', 'tm')
-      ->fields('tm')
-      ->condition('id', $id)
-      ->execute()
-      ->fetch();
+            ->fields('tm')
+            ->condition('id', $id)
+            ->execute()
+            ->fetch();
+    $form['id'] = [
+      '#type' => 'hidden',
+      '#value' => $id,
+    ];
   }
-  $selected = isset($form_state['values']['state']) ? $form_state['values']['state'] : key($all_state_option);
+  $selected_state = isset($form_state['values']['state']) ? $form_state['values']['state'] : key($all_state_option);
+  $selected_group = isset($form_state['values']['group']) ? $form_state['values']['group'] : key($all_group_option);
+  
   $form['shop_name'] = [
     '#type' => 'textfield',
     '#title' => 'نام فروشگاه',
-    '#default_value' => $merchant->shop_name ? $merchant->shop_name : '',
+    '#default_value' => isset($merchant->shop_name) ? $merchant->shop_name : '',
     '#maxlength' => 200, 
     '#required' => TRUE,
   ];
@@ -74,12 +104,12 @@ function merchant_add_form($form, &$form_state, $id=0) {
     '#type' => 'select',
     '#title' => 'استان',
     '#options' => $all_state_option,
-    '#ajax' => array(
+    '#ajax' => [
       'event' => 'change',
-      'callback' => 'merchant_ajax_callback',
+      'callback' => 'merchant_city_ajax_callback',
       'wrapper' => 'dropdown-city-replace',
-    ),
-    '#default_value' => $merchant->state ? $merchant->state : 0,
+    ],
+    '#default_value' => isset($merchant->state) ? $merchant->state : 0,
   ];
 
   $form['city'] = [
@@ -87,14 +117,35 @@ function merchant_add_form($form, &$form_state, $id=0) {
     '#title' => 'شهرستان',
     '#prefix' => '<div id="dropdown-city-replace">',
     '#suffix' => '</div> <br>',
-    '#options' => _ajax_city_dropdown_options($selected),
-    '#default_value' => $merchant->city ? $merchant->city : 0,
+    '#options' => _ajax_city_dropdown_options($selected_state),
+    '#default_value' => isset($merchant->city) ? $merchant->city : 0,
+  ];
+  
+  $form['group'] = [
+    '#type' => 'select',
+    '#title' => 'گروه',
+    '#options' => $all_group_option,
+    '#ajax' => [
+      'event' => 'change',
+      'callback' => 'merchant_group_ajax_callback',
+      'wrapper' => 'dropdown-group-replace',
+    ],
+    '#default_value' => isset($merchant->group) ? $merchant->group : 0,
+  ];
+
+  $form['sub_group'] = [
+    '#type' => 'select',
+    '#title' => 'زیر گروه',
+    '#prefix' => '<div id="dropdown-group-replace">',
+    '#suffix' => '</div> <br>',
+    '#options' => _ajax_group_dropdown_options($selected_group),
+    '#default_value' => isset($merchant->sub_group) ? $merchant->sub_group : 0,
   ];
   
   $form['phone_number'] = [
     '#type' => 'textfield',
     '#title' => 'شماره تماس',
-    '#default_value' => $merchant->phone_number ? $merchant->phone_number : '',
+    '#default_value' => isset($merchant->phone_number) ? $merchant->phone_number : '',
     '#maxlength' => 13, 
     '#required' => TRUE,
   ];
@@ -102,26 +153,26 @@ function merchant_add_form($form, &$form_state, $id=0) {
   $form['address'] = [
     '#type' => 'textarea',
     '#title' => 'آدرس',
-    '#default_value' => $merchant->address ? $merchant->address : '',
+    '#default_value' => isset($merchant->address) ? $merchant->address : '',
     '#required' => TRUE,
   ];
   
   $form['map_x'] = [
     '#type' => 'hidden',
     '#value' => 0,
-    '#default_value' => $merchant->map_x ? $merchant->map_x : 0,
+    '#default_value' => isset($merchant->map_x) ? $merchant->map_x : 0,
   ];
   
   $form['map_y'] = [
     '#type' => 'hidden',
     '#value' => 0,
-    '#default_value' => $merchant->map_x ? $merchant->map_x : 0,
+    '#default_value' => isset($merchant->map_y) ? $merchant->map_y : 0,
   ];
   
   $form['description'] = [
     '#type' => 'textarea',
     '#title' => 'توضیحات',
-    '#default_value' => $merchant->description ? $merchant->description : '',
+    '#default_value' => isset($merchant->description) ? $merchant->description : '',
   ];
 
    $form['merchant_image_fieldset'] = [
@@ -129,39 +180,39 @@ function merchant_add_form($form, &$form_state, $id=0) {
     '#title' => 'تصاویر اسلایدر',
   ];
  
-  $form['merchant_image_fieldset']['merchant_image_fid_1'] = [
+  $form['merchant_image_fieldset']['image_fid_1'] = [
     '#type' => 'managed_file',
     '#title' => 'عکس شماره 1',
     '#required' => TRUE,
-    '#default_value' => $merchant->merchant_image_fid_1 ? $merchant->merchant_image_fid_1 : '',
+    '#default_value' => isset($merchant->image_fid_1) ? $merchant->image_fid_1 : '',
     '#upload_location' => 'public://merchant_images/',
   ];
   
-  $form['merchant_image_fieldset']['merchant_image_fid_2'] = [
+  $form['merchant_image_fieldset']['image_fid_2'] = [
     '#type' => 'managed_file',
     '#title' => 'عکس شماره 2',
-    '#default_value' => variable_get('merchant_image_fid_2', ''),
+    '#default_value' => isset($merchant->image_fid_2) ? $merchant->image_fid_2 : '',
     '#upload_location' => 'public://merchant_images/',
   ];
   
-  $form['merchant_image_fieldset']['merchant_image_fid_3'] = [
+  $form['merchant_image_fieldset']['image_fid_3'] = [
     '#type' => 'managed_file',
     '#title' => 'عکس شماره 3',
-    '#default_value' => variable_get('merchant_image_fid_3', ''),
+    '#default_value' => isset($merchant->image_fid_3) ? $merchant->image_fid_3 : '',
     '#upload_location' => 'public://merchant_images/',
   ];
   
-  $form['merchant_image_fieldset']['merchant_image_fid_4'] = [
+  $form['merchant_image_fieldset']['image_fid_4'] = [
     '#type' => 'managed_file',
     '#title' => 'عکس شماره 4',
-    '#default_value' => variable_get('merchant_image_fid_4', ''),
+    '#default_value' => isset($merchant->image_fid_4) ? $merchant->image_fid_4 : '',
     '#upload_location' => 'public://merchant_images/',
   ];
   
-  $form['merchant_image_fieldset']['merchant_image_fid_5'] = [
+  $form['merchant_image_fieldset']['image_fid_5'] = [
     '#type' => 'managed_file',
     '#title' => 'عکس شماره 5',
-    '#default_value' => variable_get('merchant_image_fid_5', ''),
+    '#default_value' => isset($merchant->image_fid_5) ? $merchant->image_fid_5 : '',
     '#upload_location' => 'public://merchant_images/',
   ];
   
@@ -175,38 +226,88 @@ function merchant_add_form($form, &$form_state, $id=0) {
 
 
 
+function merchant_add_form_validate($form, &$form_state) {
+  
+  for ($index = 1; $index <= 5; $index++) {
+    if(isset($form_state['values']["image_fid_$index"]) && $form_state['values']["image_fid_$index"]) {
+      $file = file_load($form_state['values']["image_fid_$index"]);
+      $file->status = FILE_STATUS_PERMANENT;
+      file_save($file);
+      file_usage_add($file, 'merchant', 'file', $form_state['values']["image_fid_$index"]);
+    }
+  }  
+}
+
+
+
 function merchant_add_form_submit($form, &$form_state) {
   $form_values = $form_state['values'];
-  db_insert('tiam_merchant')
-          ->fields([
-            'shop_name' => $form_values['shop_name'],
-            'state' => $form_values['state'],
-            'city' => $form_values['city'],
-            'phone_number' => $form_values['phone_number'],
-            'address' => $form_values['address'],
-            'map_x' => $form_values['map_x'],
-            'map_y' => $form_values['map_y'],
-            'description' => $form_values['description'] ? $form_values['description'] : '',
-	    'image_fid_1' => $form_values['merchant_image_fid_1'],
-	    'image_fid_2' => $form_values['merchant_image_fid_2'],
-	    'image_fid_3' => $form_values['merchant_image_fid_3'],
-	    'image_fid_4' => $form_values['merchant_image_fid_4'],
- 	    'image_fid_5' => $form_values['merchant_image_fid_5'],
-          ])
-          ->execute();
-
+  $id = $form_values['id'];
+  if($id) {
+    db_update('tiam_merchant')
+            ->fields([
+              'shop_name' => $form_values['shop_name'],
+              'state' => $form_values['state'],
+              'city' => $form_values['city'],
+              'phone_number' => $form_values['phone_number'],
+              'address' => $form_values['address'],
+              'map_x' => $form_values['map_x'],
+              'map_y' => $form_values['map_y'],
+              'description' => $form_values['description'] ? $form_values['description'] : '',
+              'image_fid_1' => $form_values['image_fid_1'],
+              'image_fid_2' => $form_values['image_fid_2'],
+              'image_fid_3' => $form_values['image_fid_3'],
+              'image_fid_4' => $form_values['image_fid_4'],
+              'image_fid_5' => $form_values['image_fid_5'],
+            ])
+            ->condition('id', $id)
+            ->execute();
+  }
+  else {
+    db_insert('tiam_merchant')
+            ->fields([
+              'shop_name' => $form_values['shop_name'],
+              'state' => $form_values['state'],
+              'city' => $form_values['city'],
+              'phone_number' => $form_values['phone_number'],
+              'address' => $form_values['address'],
+              'map_x' => $form_values['map_x'],
+              'map_y' => $form_values['map_y'],
+              'description' => $form_values['description'] ? $form_values['description'] : '',
+              'image_fid_1' => $form_values['image_fid_1'],
+              'image_fid_2' => $form_values['image_fid_2'],
+              'image_fid_3' => $form_values['image_fid_3'],
+              'image_fid_4' => $form_values['image_fid_4'],
+              'image_fid_5' => $form_values['image_fid_5'],
+            ])
+            ->execute();    
+  }
+  drupal_set_message('مشخصات پذیرنده با موفقیت ذخیره شد.');
   $form_state['redirect'] = ['admin/merchant']; 
 }
 
 
 
-function merchant_ajax_callback($form, $form_state) {
+function merchant_city_ajax_callback($form, $form_state) {
   return $form['city'];
+}
+
+function merchant_group_ajax_callback($form, $form_state) {
+  return $form['sub_group'];
 }
 
 
 
 function _ajax_city_dropdown_options($key = 0) {
+  
+  $city_list = province_city($key);
+  unset($city_list[0]);
+  return $city_list;
+}
+
+
+
+function _ajax_group_dropdown_options($key = 0) {
   
   $city_list = province_city($key);
   unset($city_list[0]);
