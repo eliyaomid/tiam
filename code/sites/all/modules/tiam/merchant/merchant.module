@@ -37,6 +37,16 @@ function merchant_menu() {
     'file' => 'merchant.admin.inc',
     'type' => MENU_LOCAL_ACTION,
   ];
+  
+  $items['admin/merchant/edit/%'] = [
+    'title' => 'ویرایش پذیرنده',
+    'description' => 'ویرایش یک پذیرنده',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => ['merchant_add_form', 3],
+    'access arguments' => ['administer merchant'],
+    'file' => 'merchant.admin.inc',
+    'type' => MENU_LOCAL_ACTION,
+  ];
 
   $items['merchant'] = [
     'title' => 'پذیرندگان',
