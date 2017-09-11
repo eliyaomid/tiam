@@ -216,6 +216,13 @@ function merchant_add_form($form, &$form_state, $id=0) {
     '#upload_location' => 'public://merchant_images/',
   ];
   
+  $form['merchant_image_fieldset']['image_fid_6'] = [
+    '#type' => 'managed_file',
+    '#title' => 'عکس شماره 6',
+    '#default_value' => isset($merchant->image_fid_6) ? $merchant->image_fid_6 : '',
+    '#upload_location' => 'public://merchant_images/',
+  ];
+
   $form['submit'] = [
     '#type' => 'submit',
     '#value' => 'ذخیره',
@@ -259,6 +266,7 @@ function merchant_add_form_submit($form, &$form_state) {
               'image_fid_3' => $form_values['image_fid_3'],
               'image_fid_4' => $form_values['image_fid_4'],
               'image_fid_5' => $form_values['image_fid_5'],
+              'image_fid_6' => $form_values['image_fid_6'],
             ])
             ->condition('id', $id)
             ->execute();
@@ -279,6 +287,7 @@ function merchant_add_form_submit($form, &$form_state) {
               'image_fid_3' => $form_values['image_fid_3'],
               'image_fid_4' => $form_values['image_fid_4'],
               'image_fid_5' => $form_values['image_fid_5'],
+              'image_fid_6' => $form_values['image_fid_6'],
             ])
             ->execute();    
   }
@@ -309,7 +318,7 @@ function _ajax_city_dropdown_options($key = 0) {
 
 function _ajax_group_dropdown_options($key = 0) {
   
-  $city_list = province_city($key);
-  unset($city_list[0]);
-  return $city_list;
+  $sub_group_list = merchant_sub_group($key);
+  unset($sub_group_list[0]);
+  return $sub_group_list;
 }
