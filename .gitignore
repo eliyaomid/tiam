@@ -1,1 +1,5 @@
 /nbproject/*
+.buildpath
+.gitignore.swp
+.project
+.settings/*
