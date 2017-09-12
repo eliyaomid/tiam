@@ -7,7 +7,7 @@ function merchant_list_page() {
     ['data' => 'نام فروشگاه', 'field' => 'shop_name'],
     ['data' => 'استان', 'field' => 'state'],
     ['data' => 'شهرستان', 'field' => 'city'],
-    ['data' => 'گروه', 'field' => 'sub_group'],
+    ['data' => 'گروه', 'field' => 'merchant_sub_group'],
     ['data' => 'شماره تماس'],
     ['data' => 'آدرس'],
     ['data' => 'جزئیات'],
@@ -16,7 +16,7 @@ function merchant_list_page() {
           ->fields('tm', ['id', 'shop_name', 'phone_number', 'address']);
   $merchant_list_query->innerJoin('tiam_province', 'tps', 'tm.state=tps.id');
   $merchant_list_query->innerJoin('tiam_province', 'tpc', 'tm.city=tpc.id');
-  $merchant_list_query->innerJoin('tiam_merchant_group', 'tmsg', 'tm.sub_group=tmsg.id');
+  $merchant_list_query->innerJoin('tiam_merchant_group', 'tmsg', 'tm.merchant_sub_group=tmsg.id');
   $merchant_list = $merchant_list_query->fields('tps', ['id', 'name'])
           ->fields('tpc', ['id', 'name'])
           ->fields('tmsg', ['id', 'name'])
@@ -89,7 +89,7 @@ function merchant_list_filter_form($form, &$form_state) {
     '#type' => 'select',
     '#title' => 'شهرستان',
     '#prefix' => '<div id="dropdown-city-replace">',
-    '#suffix' => '</div> <br>',
+    '#suffix' => '</div>',
     '#options' => _ajax_city_dropdown_options($selected),
     '#default_value' => isset($_GET['city']) ? $_GET['city'] : 0,
   ];
