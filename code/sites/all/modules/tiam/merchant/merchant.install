@@ -28,18 +28,25 @@ function merchant_schema() {
         'unsigned' => TRUE,
         'not null' => TRUE,
       ],
-      'group' => [
-        'description' => 'TODO: please describe this field!',
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-      ],
-      'sub_group' => [
-        'description' => 'TODO: please describe this field!',
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-      ],
+      'city_region' => [
+	      'description' => 'TODO: please describe this field!',
+	      'type' => 'int',
+	      'unsigned' => TRUE,
+	      'not null' => TRUE,
+	      'default' => 0,
+	  	],
+      'merchant_group' => [
+	      'description' => 'TODO: please describe this field!',
+	      'type' => 'int',
+	      'unsigned' => TRUE,
+	      'not null' => TRUE,
+	    ],
+	    'merchant_sub_group' => [
+	      'description' => 'TODO: please describe this field!',
+	      'type' => 'int',
+	      'unsigned' => TRUE,
+	      'not null' => TRUE,
+	    ],
       'phone_number' => [
         'description' => 'TODO: please describe this field!',
         'type' => 'varchar',
