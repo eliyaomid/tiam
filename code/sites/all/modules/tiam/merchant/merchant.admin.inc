@@ -7,8 +7,8 @@ function merchant_list() {
     ['data' => 'نام فروشگاه', 'field' => 'shop_name'],
     ['data' => 'استان', 'field' => 'state'],
     ['data' => 'شهرستان', 'field' => 'city'],
-    ['data' => 'گروه', 'field' => 'merchant_group'],
-    ['data' => 'زیرگروه', 'field' => 'merchant_sub_group'],
+    ['data' => 'صنف', 'field' => 'merchant_group'],
+    ['data' => 'گروه', 'field' => 'merchant_sub_group'],
     ['data' => 'شماره تماس'],
     ['data' => 'آدرس'],
     ['data' => 'جزئیات'],
@@ -124,7 +124,7 @@ function merchant_add_form($form, &$form_state, $id=0) {
   
   $form['merchant_group'] = [
     '#type' => 'select',
-    '#title' => 'گروه',
+    '#title' => 'صنف',
     '#options' => $all_group_option,
     '#ajax' => [
       'event' => 'change',
@@ -137,7 +137,7 @@ function merchant_add_form($form, &$form_state, $id=0) {
 
   $form['merchant_sub_group'] = [
     '#type' => 'select',
-    '#title' => 'زیر گروه',
+    '#title' => 'گروه',
     '#prefix' => '<div id="dropdown-group-replace">',
     '#suffix' => '</div>',
     '#options' => _merchant_ajax_group_dropdown_options($selected_group),

@@ -56,6 +56,16 @@ function merchant_menu() {
     'menu_name' => 'main-menu',
     'file' => 'merchant.pages.inc',
   ];
+  
+  $items['admin/merchant_group/add'] = [
+  		'title' => 'افزودن صنف',
+  		'description' => 'افزودن یک صنف',
+  		'page callback' => 'drupal_get_form',
+  		'page arguments' => ['merchant_add_form'],
+  		'access arguments' => ['administer merchant'],
+  		'file' => 'merchant.admin.inc',
+  		'type' => MENU_LOCAL_ACTION,
+  ];
 
   return $items;
 }
