@@ -318,12 +318,16 @@ function merchant_group_ajax_callback($form, $form_state) {
 
 function _merchant_ajax_city_dropdown_options($key = 0) {
   
-  return province_city($key);
+	$city_list = province_city($key);
+	unset($city_list[0]);
+	return $city_list;
 }
 
 
 
 function _merchant_ajax_group_dropdown_options($key = 0) {
   
-  return merchant_sub_group($key);
+	$group_list = merchant_sub_group($key);
+	unset($group_list[0]);
+	return $group_list;
 }
