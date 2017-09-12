@@ -122,6 +122,15 @@ function merchant_add_form($form, &$form_state, $id=0) {
     '#default_value' => isset($merchant->city) ? $merchant->city : 0,
   ];
   
+  $form['city_region'] = [
+  		'#type' => 'select',
+  		'#title' => 'ناحیه',
+  		'#prefix' => '<div id="dropdown-city-region-replace">',
+  		'#suffix' => '</div>',
+//   		'#options' => _merchant_ajax_city_region_dropdown_options($selected_city),
+  		'#default_value' => isset($merchant->city_region) ? $merchant->city_region : 0,
+  ];
+  
   $form['merchant_group'] = [
     '#type' => 'select',
     '#title' => 'صنف',
