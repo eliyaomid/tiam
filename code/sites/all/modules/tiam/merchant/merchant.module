@@ -65,8 +65,13 @@ function merchant_menu() {
  * Implements hook_block_info().
  */
 function merchant_block_info() {
+	
   $blocks['merchant_list_filter'] = [
     'info' => 'جستجوی پذیرندگان'
+  ];
+  
+  $blocks['merchant_iran_map'] = [
+  		'info' => 'نقشه ایران'
   ];
 
   return $blocks;
@@ -84,10 +89,15 @@ function merchant_block_view($delta = '') {
       $block['subject'] = 'جستجوی پذیرندگان';
       $block['content'] = drupal_get_form('merchant_list_filter_form');
       break;
+    case 'merchant_iran_map':
+    	$block['subject'] = 'نقشه ایران';
+     	$block['content'] = merchant_get_iran_map();
+     	break;
   }
 
   return $block;
 }
+
 
 
 function merchant_sub_group($group_id) {
@@ -108,4 +118,10 @@ function merchant_sub_group($group_id) {
 		}
 	}
 	return $all_group_list;
+}
+
+
+
+function merchant_get_iran_map() {
+	
 }
