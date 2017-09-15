@@ -80,3 +80,7 @@ select.form-control {
 th {
     text-align: right;
 }
+
+.navbar {
+  margin-bottom: 0;
+}

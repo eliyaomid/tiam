@@ -1,0 +1,9 @@
+name = Jssor Slider
+description = Jssor Slider
+core = 7.x
+package = Tiam
+
+;;;;;;;;;;;;;;;;;;;;;
+;; Scripts
+;;;;;;;;;;;;;;;;;;;;;
+scripts[] = js/jssor.slider.min.js

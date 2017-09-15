@@ -1,0 +1,76 @@
+<?php
+
+function jssor_slider_generator($images = [], $options = []) {
+
+  $options += [
+    'autoplay' => 1,
+    'max_width' => 2000
+  ];
+  $all_node = taxonomy_select_nodes(1, false);
+  foreach ($all_node as $node) {
+    print_r($node);
+    exit();
+    
+  }
+//  print_r();
+//  exit();
+//  return theme('jssor_slider', ['options' => $options, 'images' => $images]);
+  return null;
+}
+
+
+
+/**
+ * 
+ * Implements hook_theme()
+ */
+function jssor_slider_theme() {
+  return [
+    'jssor_slider' => [
+      'variables' => ['images' => [], 'options' => []],
+      'template' => 'jssor_slider'
+    ]
+  ];
+}
+
+
+/**
+ * Implements hook_block_info()
+ */
+function jssor_slider_block_info() {
+  $blocks['main_slider'] = [
+    'info' => 'اسلایدر صفحه اصلی'
+  ];
+
+  return $blocks;
+}
+
+
+
+/**
+ * Implements hook_block_view()
+ */
+function jssor_slider_block_view($delta = '') {
+  $block = [];
+  
+  switch ($delta) {
+    case 'main_slider':
+      $options =  [
+        'autoplay' => 1,
+        'max_width' => 2000
+      ];
+      $images = [];
+      $all_node = taxonomy_select_nodes(1, false);
+      foreach ($all_node as $node) {
+        $node = node_load($node);
+        $images[] = [
+          'uri' => $node->field_image['und'][0]['uri'],
+          'thumb' => $node->title
+        ];
+      }
+      $block['content'] = theme('jssor_slider', ['options' => $options, 'images' => $images]);
+      break;
+  }
+
+  return $block;
+}
