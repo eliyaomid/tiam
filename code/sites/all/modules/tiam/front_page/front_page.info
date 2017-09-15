@@ -1,0 +1,4 @@
+name = Front page
+description = Custom front page
+core = 7.x
+package = Tiam

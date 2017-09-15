@@ -1,0 +1,25 @@
+<?php
+
+function front_page_callback() {
+  
+  drupal_add_css(drupal_get_path('module', 'front_page') . '/css/style.css');
+  return [];
+}
+
+
+
+/**
+ * Implements hook_menu()
+ */
+function front_page_menu() {
+  
+  $items = [];
+  
+  $items['front-page'] = [
+    'page callback' => 'front_page_callback',
+    'access arguments' => ['access content'],
+    'type' => MENU_CALLBACK,
+  ];
+  
+  return $items;  
+}
