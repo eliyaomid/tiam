@@ -1,0 +1,29 @@
+.main-container {
+    padding: 0;
+}
+
+.navbar {
+  margin-bottom: 5px;
+}
+
+.latest-merchant {
+  max-height: 250px;
+  overflow-y: scroll;
+}
+
+.front-page-surprised {
+    text-align: center;
+}
+
+.front-page-surprised a.sosial-icon img {
+    margin: 10px 15px;
+}
+
+.front-page-partners {
+    text-align: center;
+}
+
+.front-page-partners a.partners img {
+    margin: 10px 15px;
+    height: 50px;
+}

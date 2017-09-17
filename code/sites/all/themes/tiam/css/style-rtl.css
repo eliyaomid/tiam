@@ -81,6 +81,16 @@ th {
     text-align: right;
 }
 
-.navbar {
-  margin-bottom: 0;
+.front-page-trusted {
+    text-align: center;
+}
+
+.front-page-trusted a.trusted img {
+    margin: 10px 15px;
+    height: 100px;
+}
+
+.footer {
+  background-color: #9AC1E9;
+  color: #fff;
 }

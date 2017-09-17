@@ -2,7 +2,7 @@
 
 function front_page_callback() {
   
-  drupal_add_css(drupal_get_path('module', 'front_page') . '/css/style.css');
+  drupal_add_css(drupal_get_path('module', 'front_page') . '/css/front_page.css', ['type'=>'file', 'group'=>CSS_THEME]);
   return [];
 }
 
@@ -21,5 +21,151 @@ function front_page_menu() {
     'type' => MENU_CALLBACK,
   ];
   
+  $items['contact-us'] = [
+    'page callback' => 'contact_us_callback',
+    'access arguments' => ['access content'],
+    'title' => 'ارتباط با ما',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('contact_site_form'),
+    'access arguments' => array('access site-wide contact form'),
+    'type' => MENU_SUGGESTED_ITEM,
+    'file' => 'contact.pages.inc',
+  ];
+  
   return $items;  
+}
+
+
+
+
+/**
+ * Implements hook_block_info()
+ */
+function front_page_block_info() {
+	
+  $blocks['front_page_surprised'] = [
+    'info' => 'عضویت در سوپرایزونه',
+    'visibility' => BLOCK_VISIBILITY_LISTED,
+    'pages' => '<front>'
+  ];
+  
+  $blocks['front_page_partners'] = [
+    'info' => 'همکاران',
+    'visibility' => BLOCK_VISIBILITY_LISTED,
+    'pages' => '<front>'
+  ];
+  
+  $blocks['front_page_trusted'] = [
+    'info' => 'نماد اعتماد'
+  ];
+
+  return $blocks;
+}
+
+
+
+/**
+ * Implements hook_block_view()
+ */
+function front_page_block_view($delta = '') {
+  
+  $block = [];
+  
+  switch ($delta) {
+    case 'front_page_surprised':
+      $block = [
+        'subject' => 'عضویت در سوپرایزونه',
+        'content' => [
+          '#markup' =>
+              l(
+                theme_image([
+                  'path' => drupal_get_path('module', 'front_page').'/images/sosial/telegram.png',
+                  'attributes' => ['class' => ['telegram']]
+                ]),
+                'https://t.me/tickethall',
+                ['html'=>TRUE, 'attributes' => ['class' => ['sosial-icon']]]
+              ).
+              l(
+                theme_image([
+                  'path' => drupal_get_path('module', 'front_page').'/images/sosial/instagram.png',
+                  'attributes' => ['class' => ['instagram']]
+                ]),
+                'https://www.instagram.com/eliyaomid/',
+                ['html'=>TRUE, 'attributes' => ['class' => ['sosial-icon']]]
+              ),
+          '#prefix' => '<div class="front-page-surprised">',
+          '#suffix' => '</div>',
+        ]
+      ];
+      break;
+    case 'front_page_partners':
+      $block = [
+        'subject' => 'بانک ها و شرکت های همکار',
+        'content' => [
+          '#markup' =>
+              l(
+                theme_image([
+                  'path' => drupal_get_path('module', 'front_page').'/images/partners/small-logo1.png',
+                  'attributes' => ['class' => ['small-logo1']]
+                ]),
+                '#',
+                ['html'=>TRUE, 'attributes' => ['class' => ['partners']]]
+              ).
+              l(
+                theme_image([
+                  'path' => drupal_get_path('module', 'front_page').'/images/partners/small-logo2.png',
+                  'attributes' => ['class' => ['small-logo2']]
+                ]),
+                '#',
+                ['html'=>TRUE, 'attributes' => ['class' => ['partners']]]
+              ).
+              l(
+                theme_image([
+                  'path' => drupal_get_path('module', 'front_page').'/images/partners/small-logo3.png',
+                  'attributes' => ['class' => ['small-logo3']]
+                ]),
+                '#',
+                ['html'=>TRUE, 'attributes' => ['class' => ['partners']]]
+              ).
+              l(
+                theme_image([
+                  'path' => drupal_get_path('module', 'front_page').'/images/partners/small-logo4.png',
+                  'attributes' => ['class' => ['small-logo4']]
+                ]),
+                '#',
+                ['html'=>TRUE, 'attributes' => ['class' => ['partners']]]
+              ),
+          '#prefix' => '<div class="front-page-partners">',
+          '#suffix' => '</div>',
+        ]
+      ];
+      break;
+    case 'front_page_trusted':
+      $block = [
+        'content' => [
+          '#markup' =>
+            l(
+              theme_image([
+                'path' => drupal_get_path('module', 'front_page').'/images/trusted/enamad.png',
+                'attributes' => ['class' => ['enamad']]
+              ]),
+              '#',
+              ['html'=>TRUE, 'attributes' => ['class' => ['trusted']]]
+            ).
+            l(
+              theme_image([
+                'path' => drupal_get_path('module', 'front_page').'/images/trusted/samandehi.png',
+                'attributes' => ['class' => ['samandehi']]
+              ]),
+              '#',
+              ['html'=>TRUE, 'attributes' => ['class' => ['trusted']]]
+            ). '<p class="copyright">کلیه حقوق این وب سایت متعلق به شرکت آژیراک می باشد.</p><p>قوانین حریم شخصی | شرایط استفاده</p>',
+          '#prefix' => '<div class="front-page-trusted">',
+          '#suffix' => '</div>',
+        ],
+      ];
+      break;
+  }
+  
+  return $block;  
 }

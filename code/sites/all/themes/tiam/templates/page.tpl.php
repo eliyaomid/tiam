@@ -160,7 +160,7 @@
 </div>
 
 <?php if (!empty($page['footer'])): ?>
-  <footer class="footer <?php print $container_class; ?>">
+  <footer class="footer container-fluid">
     <?php print render($page['footer']); ?>
   </footer>
 <?php endif; ?>

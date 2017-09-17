@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Implements hook_permission().
+ * Implements hook_permission()
  */
 function merchant_permission() {
   return array(
@@ -14,7 +14,7 @@ function merchant_permission() {
 
 
 /**
- * Implements hook_menu().
+ * Implements hook_menu()
  */
 function merchant_menu() {
 
@@ -57,11 +57,11 @@ function merchant_menu() {
     'file' => 'merchant.pages.inc',
   ];
   
-  $items['admin/merchant_group/add'] = [
+  $items['admin/merchant/merchant_group/add'] = [
   		'title' => 'افزودن صنف',
   		'description' => 'افزودن یک صنف',
   		'page callback' => 'drupal_get_form',
-  		'page arguments' => ['merchant_add_form'],
+  		'page arguments' => ['merchant_group_add_form'],
   		'access arguments' => ['administer merchant'],
   		'file' => 'merchant.admin.inc',
   		'type' => MENU_LOCAL_ACTION,
@@ -71,17 +71,43 @@ function merchant_menu() {
 }
 
 
+
 /**
- * Implements hook_block_info().
+ * 
+ * Implements hook_theme()
+ */
+function merchant_theme() {
+  return [
+    'merchant_iran_map' => [
+      'variables' => [],
+      'template' => 'merchant_iran_map'
+    ]
+  ];
+}
+
+
+
+/**
+ * Implements hook_block_info()
  */
 function merchant_block_info() {
 	
   $blocks['merchant_list_filter'] = [
-    'info' => 'جستجوی پذیرندگان'
+    'info' => 'جستجوی پذیرندگان',
+    'visibility' => BLOCK_VISIBILITY_LISTED,
+    'pages' => 'merchant'
   ];
   
   $blocks['merchant_iran_map'] = [
-  		'info' => 'نقشه ایران'
+    'info' => 'نقشه ایران',
+    'visibility' => BLOCK_VISIBILITY_LISTED,
+    'pages' => 'merchant'
+  ];
+  
+  $blocks['merchant_list_latest'] = [
+    'info' => 'آخرین پذیرندگان',
+    'visibility' => BLOCK_VISIBILITY_LISTED,
+    'pages' => '<front>'
   ];
 
   return $blocks;
@@ -89,7 +115,7 @@ function merchant_block_info() {
 
 
 /**
- * Implements hook_block_view().
+ * Implements hook_block_view()
  */
 function merchant_block_view($delta = '') {
   $block = [];
@@ -100,9 +126,24 @@ function merchant_block_view($delta = '') {
       $block['content'] = drupal_get_form('merchant_list_filter_form');
       break;
     case 'merchant_iran_map':
-    	$block['subject'] = 'نقشه ایران';
-     	$block['content'] = merchant_get_iran_map();
+     	$block = [
+        'content' => [
+          '#markup' => theme('merchant_iran_map', []),
+          '#attached' => [
+            'css' => [
+              drupal_get_path('module', 'merchant').'/css/iranmap.css'
+            ],
+            'js' => [
+              drupal_get_path('module', 'merchant').'/js/iranmap.js'
+            ],
+          ],
+        ]
+      ];
      	break;
+    case 'merchant_list_latest':
+      $block['subject'] = 'آخرین پذیرندگان';
+      $block['content'] = merchant_list_latest();
+      break;
   }
 
   return $block;
@@ -132,6 +173,53 @@ function merchant_sub_group($group_id) {
 
 
 
-function merchant_get_iran_map() {
-	
+function merchant_list_latest() {
+  $header = [
+    ['data' => 'شناسه'],
+    ['data' => 'نام فروشگاه'],
+    ['data' => 'استان'],
+    ['data' => 'شهرستان'],
+  	['data' => 'صنف'],
+    ['data' => 'گروه'],
+    ['data' => 'شماره تماس'],
+    ['data' => 'آدرس'],
+    ['data' => 'جزئیات'],
+  ];
+  $merchant_list_query = db_select('tiam_merchant', 'tm')
+          ->fields('tm', ['id', 'shop_name', 'phone_number', 'address']);
+  $merchant_list_query->leftJoin('tiam_province', 'tps', 'tm.state=tps.id');
+  $merchant_list_query->leftJoin('tiam_province', 'tpc', 'tm.city=tpc.id');
+  $merchant_list_query->leftJoin('tiam_province', 'tpcr', 'tm.city_region=tpcr.id');
+  $merchant_list_query->leftJoin('tiam_merchant_group', 'tmg', 'tm.merchant_group=tmg.id');
+  $merchant_list_query->leftJoin('tiam_merchant_group', 'tmsg', 'tm.merchant_sub_group=tmsg.id');
+  $merchant_list = $merchant_list_query->fields('tps', ['id', 'name'])
+          ->fields('tpc', ['id', 'name'])
+          ->fields('tpcr', ['id', 'name'])
+          ->fields('tmg', ['id', 'name'])
+          ->fields('tmsg', ['id', 'name']);
+  $merchant_list = $merchant_list->execute();
+  $rows = [];
+  foreach($merchant_list as $merchant) {
+    $rows[] = [
+      ['data' => $merchant->id],
+      ['data' => $merchant->shop_name],
+      ['data' => $merchant->name],
+      ['data' => $merchant->tpc_name],
+    	['data' => $merchant->tmg_name],
+      ['data' => $merchant->tmsg_name],
+      ['data' => $merchant->phone_number],
+      ['data' => $merchant->address],
+      l('مشاهده جزئیات', url('merchant/'.$merchant->id)),
+    ];
+  }
+  $page_output['merchant_list'] = [
+    '#theme' => 'table',
+    '#header' => $header,
+    '#rows' => $rows,
+    '#attributes' => ['class' => ['table-bordered']],
+    '#prefix' => '<div class="latest-merchant">',
+    '#suffix' => '</div>',
+  ];
+  
+  return $page_output;
 }

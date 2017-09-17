@@ -15,10 +15,10 @@ function merchant_list() {
   ];
   $merchant_list_query = db_select('tiam_merchant', 'tm')
           ->fields('tm', ['id', 'shop_name', 'state', 'city', 'phone_number', 'address']);
-  $merchant_list_query->innerJoin('tiam_province', 'tps', 'tm.state=tps.id');
-  $merchant_list_query->innerJoin('tiam_province', 'tpc', 'tm.city=tpc.id');
-  $merchant_list_query->innerJoin('tiam_merchant_group', 'tmg', 'tm.merchant_group=tmg.id');
-  $merchant_list_query->innerJoin('tiam_merchant_group', 'tmsg', 'tm.merchant_sub_group=tmsg.id');
+  $merchant_list_query->leftJoin('tiam_province', 'tps', 'tm.state=tps.id');
+  $merchant_list_query->leftJoin('tiam_province', 'tpc', 'tm.city=tpc.id');
+  $merchant_list_query->leftJoin('tiam_merchant_group', 'tmg', 'tm.merchant_group=tmg.id');
+  $merchant_list_query->leftJoin('tiam_merchant_group', 'tmsg', 'tm.merchant_sub_group=tmsg.id');
   $merchant_list = $merchant_list_query->fields('tps', ['id', 'name'])
           ->fields('tpc', ['id', 'name'])
           ->fields('tmg', ['id', 'name'])
@@ -61,7 +61,9 @@ function merchant_add_form($form, &$form_state, $id=0) {
           ->execute()
           ->fetchAll();
   
-  $all_state_option = [];
+  $all_state_option = [
+    '0' => 'همه'
+  ];
   foreach($all_state as $state) {
     $all_state_option[$state->id] = $state->name;
   }
@@ -72,7 +74,9 @@ function merchant_add_form($form, &$form_state, $id=0) {
           ->execute()
           ->fetchAll();
   
-  $all_group_option = [];
+  $all_group_option = [
+    '0' => 'همه'
+  ];
   foreach($all_group as $group) {
     $all_group_option[$group->id] = $group->name;
   }
@@ -90,7 +94,8 @@ function merchant_add_form($form, &$form_state, $id=0) {
     ];
   }
   $selected_state = isset($form_state['values']['state']) ? $form_state['values']['state'] : key($all_state_option);
-  $selected_group = isset($form_state['values']['group']) ? $form_state['values']['group'] : key($all_group_option);
+  $selected_city = isset($form_state['values']['city']) ? $form_state['values']['city'] : 0;
+  $selected_group = isset($form_state['values']['merchant_group']) ? $form_state['values']['merchant_group'] : key($all_group_option);
   
   $form['shop_name'] = [
     '#type' => 'textfield',
@@ -100,7 +105,12 @@ function merchant_add_form($form, &$form_state, $id=0) {
     '#required' => TRUE,
   ];
   
-  $form['state'] = [
+  $form['merchant_area'] = [
+    '#type' => 'fieldset',
+    '#title' => 'منطقه جغرافیایی',
+  ];
+  
+  $form['merchant_area']['state'] = [
     '#type' => 'select',
     '#title' => 'استان',
     '#options' => $all_state_option,
@@ -113,25 +123,36 @@ function merchant_add_form($form, &$form_state, $id=0) {
     '#default_value' => isset($merchant->state) ? $merchant->state : 0,
   ];
 
-  $form['city'] = [
+  $form['merchant_area']['city'] = [
     '#type' => 'select',
     '#title' => 'شهرستان',
     '#prefix' => '<div id="dropdown-city-replace">',
     '#suffix' => '</div>',
     '#options' => _merchant_ajax_city_dropdown_options($selected_state),
+    '#ajax' => [
+      'event' => 'change',
+      'callback' => 'merchant_city_region_ajax_callback',
+      'wrapper' => 'dropdown-city-region-replace',
+    	'method' => 'replace',
+    ],
     '#default_value' => isset($merchant->city) ? $merchant->city : 0,
   ];
   
-  $form['city_region'] = [
+  $form['merchant_area']['city_region'] = [
   		'#type' => 'select',
   		'#title' => 'ناحیه',
   		'#prefix' => '<div id="dropdown-city-region-replace">',
   		'#suffix' => '</div>',
-//   		'#options' => _merchant_ajax_city_region_dropdown_options($selected_city),
+   		'#options' => _merchant_ajax_city_dropdown_options($selected_city),
   		'#default_value' => isset($merchant->city_region) ? $merchant->city_region : 0,
   ];
   
-  $form['merchant_group'] = [
+  $form['merchant_grouping'] = [
+    '#type' => 'fieldset',
+    '#title' => 'گروه بندی صنفی',
+  ];
+  
+  $form['merchant_grouping']['merchant_group'] = [
     '#type' => 'select',
     '#title' => 'صنف',
     '#options' => $all_group_option,
@@ -144,7 +165,7 @@ function merchant_add_form($form, &$form_state, $id=0) {
     '#default_value' => isset($merchant->group) ? $merchant->group : 0,
   ];
 
-  $form['merchant_sub_group'] = [
+  $form['merchant_grouping']['merchant_sub_group'] = [
     '#type' => 'select',
     '#title' => 'گروه',
     '#prefix' => '<div id="dropdown-group-replace">',
@@ -186,7 +207,7 @@ function merchant_add_form($form, &$form_state, $id=0) {
     '#default_value' => isset($merchant->description) ? $merchant->description : '',
   ];
 
-   $form['merchant_image_fieldset'] = [
+  $form['merchant_image_fieldset'] = [
     '#type' => 'fieldset',
     '#title' => 'تصاویر اسلایدر',
   ];
@@ -316,11 +337,19 @@ function merchant_add_form_submit($form, &$form_state) {
 
 
 function merchant_city_ajax_callback($form, $form_state) {
-  return $form['city'];
+  return $form['merchant_area']['city'];
 }
 
+
+
+function merchant_city_region_ajax_callback($form, $form_state) {
+  return $form['merchant_area']['city_region'];
+}
+
+
+
 function merchant_group_ajax_callback($form, $form_state) {
-  return $form['merchant_sub_group'];
+  return $form['merchant_grouping']['merchant_sub_group'];
 }
 
 
@@ -328,7 +357,6 @@ function merchant_group_ajax_callback($form, $form_state) {
 function _merchant_ajax_city_dropdown_options($key = 0) {
   
 	$city_list = province_city($key);
-	unset($city_list[0]);
 	return $city_list;
 }
 
@@ -337,6 +365,14 @@ function _merchant_ajax_city_dropdown_options($key = 0) {
 function _merchant_ajax_group_dropdown_options($key = 0) {
   
 	$group_list = merchant_sub_group($key);
-	unset($group_list[0]);
 	return $group_list;
+}
+
+
+
+function merchant_group_add_form($form, &$form_state, $id=0) {
+  
+  $form = [];
+  
+  return $form;  
 }

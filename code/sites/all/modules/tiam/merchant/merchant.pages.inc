@@ -15,21 +15,28 @@ function merchant_list_page() {
   ];
   $merchant_list_query = db_select('tiam_merchant', 'tm')
           ->fields('tm', ['id', 'shop_name', 'phone_number', 'address']);
-  $merchant_list_query->innerJoin('tiam_province', 'tps', 'tm.state=tps.id');
-  $merchant_list_query->innerJoin('tiam_province', 'tpc', 'tm.city=tpc.id');
-  $merchant_list_query->innerJoin('tiam_merchant_group', 'tmg', 'tm.merchant_group=tmg.id');
-  $merchant_list_query->innerJoin('tiam_merchant_group', 'tmsg', 'tm.merchant_sub_group=tmsg.id');
+  $merchant_list_query->leftJoin('tiam_province', 'tps', 'tm.state=tps.id');
+  $merchant_list_query->leftJoin('tiam_province', 'tpc', 'tm.city=tpc.id');
+  $merchant_list_query->leftJoin('tiam_province', 'tpcr', 'tm.city_region=tpcr.id');
+  $merchant_list_query->leftJoin('tiam_merchant_group', 'tmg', 'tm.merchant_group=tmg.id');
+  $merchant_list_query->leftJoin('tiam_merchant_group', 'tmsg', 'tm.merchant_sub_group=tmsg.id');
   $merchant_list = $merchant_list_query->fields('tps', ['id', 'name'])
           ->fields('tpc', ['id', 'name'])
+          ->fields('tpcr', ['id', 'name'])
           ->fields('tmg', ['id', 'name'])
           ->fields('tmsg', ['id', 'name'])
           ->extend('TableSort')
-          ->orderByHeader($header);
+          ->orderByHeader($header)
+          ->extend('PagerDefault')
+          ->limit(10);
   if(isset($_GET['state'])) {
     $merchant_list->condition('tps.id', $_GET['state']);
   }
   if(isset($_GET['city'])) {
     $merchant_list->condition('tpc.id', $_GET['city']);
+  }
+  if(isset($_GET['city_region'])) {
+    $merchant_list->condition('tpcr.id', $_GET['city_region']);
   }
   if(isset($_GET['merchant_group'])) {
   	$merchant_list->condition('tmg.id', $_GET['merchant_group']);
@@ -53,10 +60,15 @@ function merchant_list_page() {
     ];
   }
   $page_output['merchant_list'] = [
-    '#theme' => 'table',
-    '#header' => $header,
-    '#rows' => $rows,
-    '#attributes' => ['class' => ['table-bordered']]
+    'table' => [
+      '#theme' => 'table',
+      '#header' => $header,
+      '#rows' => $rows,
+      '#attributes' => ['class' => ['table-bordered']]
+    ],
+    'pager' => [
+      '#theme' => 'pager'
+    ]
   ];
 
   return $page_output;
@@ -82,6 +94,10 @@ function merchant_list_filter_form($form, &$form_state) {
   if(!$selected_state) {
     $selected_state = isset($_GET['state']) ? $_GET['state'] : 0;
   }
+  $selected_city = isset($form_state['values']['city']) ? $form_state['values']['city'] : 0;
+  if(!$selected_city) {
+    $selected_city = isset($_GET['city']) ? $_GET['city'] : 0;
+  }
   
   $all_group = db_select('tiam_merchant_group', 'tmg')
 	  ->fields('tmg', ['id', 'name'])
@@ -100,7 +116,12 @@ function merchant_list_filter_form($form, &$form_state) {
   	$selected_group = isset($_GET['merchant_group']) ? $_GET['merchant_group'] : 0;
   }
   
-  $form['state'] = [
+  $form['merchant_area'] = [
+    '#type' => 'fieldset',
+    '#title' => 'منطقه جغرافیایی',
+  ];
+  
+  $form['merchant_area']['state'] = [
     '#type' => 'select',
     '#title' => 'استان',
     '#options' => $all_state_option,
@@ -112,16 +133,36 @@ function merchant_list_filter_form($form, &$form_state) {
     '#default_value' => isset($_GET['state']) ? $_GET['state'] : 0,
   ];
 
-  $form['city'] = [
+  $form['merchant_area']['city'] = [
     '#type' => 'select',
     '#title' => 'شهرستان',
     '#prefix' => '<div id="dropdown-city-replace">',
     '#suffix' => '</div>',
     '#options' => _merchant_ajax_city_dropdown_options($selected_state),
+    '#ajax' => [
+      'event' => 'change',
+      'callback' => 'merchant_ajax_city_region_callback',
+      'wrapper' => 'dropdown-city-region-replace',
+    	'method' => 'replace',
+    ],
     '#default_value' => isset($_GET['city']) ? $_GET['city'] : 0,
   ];
   
-  $form['merchant_group'] = [
+  $form['merchant_area']['city_region'] = [
+  		'#type' => 'select',
+  		'#title' => 'ناحیه',
+  		'#prefix' => '<div id="dropdown-city-region-replace">',
+  		'#suffix' => '</div>',
+   		'#options' => _merchant_ajax_city_dropdown_options($selected_city),
+  		'#default_value' => isset($_GET['city_region']) ? $_GET['city_region'] : 0,
+  ];
+  
+  $form['merchant_grouping'] = [
+    '#type' => 'fieldset',
+    '#title' => 'گروه بندی صنفی',
+  ];
+  
+  $form['merchant_grouping']['merchant_group'] = [
   		'#type' => 'select',
   		'#title' => 'صنف',
   		'#options' => $all_group_option,
@@ -134,7 +175,7 @@ function merchant_list_filter_form($form, &$form_state) {
   		'#default_value' => isset($_GET['merchant_group']) ? $_GET['merchant_group'] : 0,
   ];
   
-  $form['merchant_sub_group'] = [
+  $form['merchant_grouping']['merchant_sub_group'] = [
   		'#type' => 'select',
   		'#title' => 'گروه',
   		'#prefix' => '<div id="dropdown-group-replace">',
@@ -159,6 +200,7 @@ function merchant_list_filter_form_submit($form, &$form_state) {
   $query = [];
   if($form_values['state']) $query['state'] = $form_values['state'];
   if($form_values['city']) $query['city'] = $form_values['city'];
+  if($form_values['city_region']) $query['city_region'] = $form_values['city_region'];
   
   if($form_values['merchant_group']) $query['merchant_group'] = $form_values['merchant_group'];
   if($form_values['merchant_sub_group']) $query['merchant_sub_group'] = $form_values['merchant_sub_group'];
@@ -169,7 +211,13 @@ function merchant_list_filter_form_submit($form, &$form_state) {
 
 
 function merchant_ajax_city_callback($form, $form_state) {
-  return $form['city'];
+  return $form['merchant_area']['city'];
+}
+
+
+
+function merchant_ajax_city_region_callback($form, $form_state) {
+  return $form['merchant_area']['city_region'];
 }
 
 
@@ -180,7 +228,7 @@ function _merchant_ajax_city_dropdown_options($key = 0) {
 
 
 function merchant_ajax_group_callback($form, $form_state) {
-	return $form['merchant_sub_group'];
+	return $form['merchant_grouping']['merchant_sub_group'];
 }
 
 
