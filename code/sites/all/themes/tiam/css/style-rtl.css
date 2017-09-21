@@ -1,6 +1,24 @@
 body {
   font-family: "BYekan","Helvetica Neue",Helvetica,Arial,sans-serif;
 }
+
+.radio label, .checkbox label {
+    min-height: 20px;
+    padding-right: 20px;
+    margin-bottom: 0;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.radio input[type="radio"],
+.radio-inline input[type="radio"],
+.checkbox input[type="checkbox"],
+.checkbox-inline input[type="checkbox"] {
+    position: absolute;
+    margin-top: 4px \9;
+    margin-right: -20px;
+}
+
 .input-group .form-control:first-child,
 .input-group-addon:first-child,
 .input-group-btn:first-child > .btn,
@@ -29,6 +47,11 @@ body {
 .input-group-addon:last-child {
   border-right: 0;
   border: 1px solid #ccc;
+}
+
+.list-group {
+    padding-right: 0;
+    margin-bottom: 20px;
 }
 
 @media (min-width: 768px) {

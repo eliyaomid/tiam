@@ -56,7 +56,7 @@ function merchant_list_page() {
       ['data' => $merchant->tmsg_name],
       ['data' => $merchant->phone_number],
       ['data' => $merchant->address],
-      l('مشاهده جزئیات', url('merchant/'.$merchant->id)),
+      l('مشاهده جزئیات', url('merchant/'.$merchant->id, ['absolute' => true])),
     ];
   }
   $page_output['merchant_list'] = [
@@ -235,4 +235,54 @@ function merchant_ajax_group_callback($form, $form_state) {
 
 function _merchant_ajax_group_dropdown_options($key = 0) {
 	return merchant_sub_group($key);
+}
+
+
+
+function merchant_info_page($id) {
+
+  drupal_add_css('.navbar{margin-bottom: 5px !important;} .main-container{padding:0 !important;}', ['type' => 'inline']);
+  $merchant = db_select('tiam_merchant', 'tm')
+          ->fields('tm')
+          ->condition('id', $id)
+          ->execute()
+          ->fetch();
+  $images = [];
+  for ($index = 1; $index <= 6; $index++) {
+    $feild_name  = "image_fid_$index";
+    $uri = file_load($merchant->$feild_name)->uri;
+    $images[] = [
+      'uri' => $uri,
+      'thumb' => $uri,    
+    ];
+  }
+  
+  drupal_set_title($merchant->shop_name);
+  return [
+    'slider' => [
+      '#theme' => 'thumbnail_navigator_with_arrows',
+      '#images' => $images,
+      '#suffix' => '<br>',
+    ],
+    'merchant_info' => [
+      '#markup' => '
+        <div class="panel panel-default">
+          <div class="panel-body">
+            Basic panel example
+          </div>
+        </div>',
+      '#prefix' => '<div class="col-sm-8">',
+      '#suffix' => '</div>',
+    ],
+    'merchant_location' => [
+      '#markup' => '
+        <div class="panel panel-default">
+          <div class="panel-body">
+            Basic panel example
+          </div>
+        </div>',
+      '#prefix' => '<div class="col-sm-4">',
+      '#suffix' => '</div>',      
+    ]
+  ];
 }

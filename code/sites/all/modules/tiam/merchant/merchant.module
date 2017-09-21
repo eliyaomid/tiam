@@ -57,6 +57,14 @@ function merchant_menu() {
     'file' => 'merchant.pages.inc',
   ];
   
+  $items['merchant/%'] = [
+    'page callback' => 'merchant_info_page',
+    'page arguments' => [1],
+    'access arguments' => ['access content'],
+    'file' => 'merchant.pages.inc',
+    'type' => MENU_CALLBACK,
+  ];
+  
   $items['admin/merchant/merchant_group/add'] = [
   		'title' => 'افزودن صنف',
   		'description' => 'افزودن یک صنف',
