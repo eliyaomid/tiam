@@ -12,26 +12,15 @@ function front_page_callback() {
  * Implements hook_menu()
  */
 function front_page_menu() {
-  
+
   $items = [];
-  
+
   $items['front-page'] = [
     'page callback' => 'front_page_callback',
     'access arguments' => ['access content'],
     'type' => MENU_CALLBACK,
   ];
-  
-  $items['contact-us'] = [
-    'page callback' => 'contact_us_callback',
-    'access arguments' => ['access content'],
-    'title' => 'ارتباط با ما',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('contact_site_form'),
-    'access arguments' => array('access site-wide contact form'),
-    'type' => MENU_SUGGESTED_ITEM,
-    'file' => 'contact.pages.inc',
-  ];
-  
+
   return $items;  
 }
 
@@ -42,19 +31,19 @@ function front_page_menu() {
  * Implements hook_block_info()
  */
 function front_page_block_info() {
-	
+
   $blocks['front_page_surprised'] = [
     'info' => 'عضویت در سوپرایزونه',
     'visibility' => BLOCK_VISIBILITY_LISTED,
     'pages' => '<front>'
   ];
-  
+
   $blocks['front_page_partners'] = [
     'info' => 'همکاران',
     'visibility' => BLOCK_VISIBILITY_LISTED,
     'pages' => '<front>'
   ];
-  
+
   $blocks['front_page_trusted'] = [
     'info' => 'نماد اعتماد'
   ];
@@ -68,9 +57,9 @@ function front_page_block_info() {
  * Implements hook_block_view()
  */
 function front_page_block_view($delta = '') {
-  
+
   $block = [];
-  
+
   switch ($delta) {
     case 'front_page_surprised':
       $block = [
@@ -166,6 +155,6 @@ function front_page_block_view($delta = '') {
       ];
       break;
   }
-  
+
   return $block;  
 }
