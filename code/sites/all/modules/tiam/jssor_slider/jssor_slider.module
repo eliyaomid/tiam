@@ -1,34 +1,18 @@
 <?php
 
-function jssor_slider_generator($images = [], $options = []) {
-
-  $options += [
-    'autoplay' => 1,
-    'max_width' => 2000
-  ];
-  $all_node = taxonomy_select_nodes(1, false);
-  foreach ($all_node as $node) {
-    print_r($node);
-    exit();
-    
-  }
-//  print_r();
-//  exit();
-//  return theme('jssor_slider', ['options' => $options, 'images' => $images]);
-  return null;
-}
-
-
-
 /**
  * 
  * Implements hook_theme()
  */
 function jssor_slider_theme() {
   return [
-    'jssor_slider' => [
-      'variables' => ['images' => [], 'options' => []],
-      'template' => 'jssor_slider'
+    'banner_slider' => [
+      'variables' => ['images' => []],
+      'template' => 'templates/banner_slider'
+    ],
+    'thumbnail_navigator_with_arrows' => [
+      'variables' => ['images' => []],
+      'template' => 'templates/thumbnail_navigator_with_arrows'
     ]
   ];
 }
@@ -52,13 +36,8 @@ function jssor_slider_block_info() {
  */
 function jssor_slider_block_view($delta = '') {
   $block = [];
-  
   switch ($delta) {
     case 'main_slider':
-      $options =  [
-        'autoplay' => 1,
-        'max_width' => 2000
-      ];
       $images = [];
       $all_node = taxonomy_select_nodes(1, false);
       foreach ($all_node as $node) {
@@ -68,7 +47,7 @@ function jssor_slider_block_view($delta = '') {
           'thumb' => $node->title
         ];
       }
-      $block['content'] = theme('jssor_slider', ['options' => $options, 'images' => $images]);
+      $block['content'] = theme('banner_slider', ['images' => $images]);
       break;
   }
 
