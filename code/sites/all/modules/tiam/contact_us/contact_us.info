@@ -1,0 +1,4 @@
+name = Contact Us
+description = Contact us page
+core = 7.x
+package = Tiam

@@ -1,0 +1,131 @@
+<?php
+
+/**
+ * Implements hook_permission()
+ */
+function contact_us_permission() {
+  return array(
+    'administer contact_us' => [
+      'title' => 'مشخصات تماس',
+    ],
+  );
+}
+
+
+
+/**
+ * Implements hook_menu()
+ */
+function contact_us_menu() {
+  
+  $items = [];
+  
+  $items['contact-us'] = [
+    'title' => 'ارتباط با ما',
+    'page callback' => 'contact_us_page_callback',
+    'access arguments' => ['access content'],
+    'menu_name' => 'main-menu',
+    'file' => 'contact_us.pages.inc',
+  ];
+  
+  $items['admin/contact-us-setting'] = [
+    'title' => 'مشخصات تماس',
+    'description' => 'مدیریت مشخصات تماس در صفحه ارتباط با ما',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => ['contact_us_info_admin_form'],
+    'access arguments' => ['administer contact_us'],
+    'file' => 'contact_us.admin.inc',
+  ];
+  
+  return $items;  
+}
+
+
+
+function contact_us_page_callback() {
+  
+  $page_output['contact_us_form'] = [
+    drupal_get_form('contact_us_page_form')
+  ];
+  
+  $phone = variable_get('contact_us_phone', ' 09134311348');
+  $fax = variable_get('contact_us_fax', '09162392091');
+  $email = variable_get('contact_us_email', 'eliyaomid@gmail.com');
+  $address = variable_get('contact_us_address', 'isfahan, iran');
+  
+  drupal_add_js('http://maps.googleapis.com/maps/api/js', ['type'=>'external']);
+  $contact_us_info_markup = <<<EOT
+<script>
+    function initialize()
+    {
+        var myCenter = 0;
+        var x = 0;
+        var y = 0;
+        if(x == 0 && y == 0)
+        {
+             myCenter = new google.maps.LatLng(32.6295447332617, 51.360626217210665);                  
+        }
+        else
+        {
+            myCenter = new google.maps.LatLng(x,y);        
+        }
+        var mapProp = {
+            center: myCenter,
+            zoom: 5,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+        var marker = new google.maps.Marker({
+            position: myCenter,
+        });
+        marker.setMap(map);
+    }
+    google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+  <div class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading">مشخصات تماس</div>
+    <ul class="list-group">
+      <li class="list-group-item"><strong>تلفن:</strong> $phone</li>
+      <li class="list-group-item"><strong>فکس:</strong> $fax</li>
+      <li class="list-group-item"><strong>ایمیل:</strong> $email</li>
+      <li class="list-group-item"><strong>آدرس:</strong> $address</li>
+      <li class="list-group-item"><div id="googleMap" class="form-control" style="height: 200px; width: 100%;"></div></li>
+    </ul>
+  </div>
+EOT;
+  $page_output['contact_us_info'] = [
+    '#type' => 'markup',
+    '#markup' => $contact_us_info_markup,
+    '#prefix' => '<div class="col-sm-7">',
+    '#suffix' => '</div>',
+  ];
+
+  return $page_output;
+}
+
+
+
+/**
+ * Implements hook_mail()
+ */
+function contact_us_mail($key, &$message, $params) {
+  $language = $message['language'];
+  $variables = array(
+    '!site-name' => variable_get('site_name', 'Drupal'),
+    '!subject' => $params['subject'],
+    '!category' => isset($params['category']['category']) ? $params['category']['category'] : '',
+    '!form-url' => url($_GET['q'], array('absolute' => TRUE, 'language' => $language)),
+    '!sender-name' => format_username($params['sender']),
+    '!sender-url' => $params['sender']->uid ? url('user/' . $params['sender']->uid, array('absolute' => TRUE, 'language' => $language)) : $params['sender']->mail,
+  );
+
+  switch ($key) {
+    case 'page_mail':
+    case 'page_copy':
+      $message['subject'] .= t('[!category] !subject', $variables, array('langcode' => $language->language));
+      $message['body'][] = t("!sender-name (!sender-url) sent a message using the contact form at !form-url.", $variables, array('langcode' => $language->language));
+      $message['body'][] = $params['message'];
+      break;
+  }
+}
