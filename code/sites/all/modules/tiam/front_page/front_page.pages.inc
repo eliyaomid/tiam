@@ -1,0 +1,14 @@
+<?php
+
+function faq_page_callback() {
+  $items = [];
+  $all_node = taxonomy_select_nodes(3, false);
+  foreach ($all_node as $node) {
+    $node = node_load($node);
+    $items[] = [
+      'title' => $node->title,
+      'body' => $node->body['und'][0]['safe_value']
+    ];
+  }
+  return theme('front_page_faq', ['items' => $items]);
+}
