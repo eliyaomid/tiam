@@ -66,18 +66,18 @@ function tiam_preprocess_block(&$variables) {
  */
 function tiam_breadcrumb($variables) {
     $breadcrumb = $variables['breadcrumb'];
-
     if (!empty($breadcrumb)) {
-            $breadcrumb[] = drupal_get_title();
-            $breadcrumbs = '<ol class="breadcrumb">';
+      $breadcrumb[] = drupal_get_title();
+      $breadcrumbs = '<ol class="breadcrumb">';
 
-            $count = count($breadcrumb) - 1;
-            foreach ($breadcrumb as $key => $value) {
-            $breadcrumbs .= '<li>' . $value . '</li>';
-            }
-            $breadcrumbs .= '</ol>';
+      $count = count($breadcrumb) - 1;
+      foreach ($breadcrumb as $key => $value) {
+        if(gettype($value) !== 'string')  continue;
+        $breadcrumbs .= '<li>' . $value . '</li>';
+      }
+      $breadcrumbs .= '</ol>';
 
-            return $breadcrumbs;
+      return $breadcrumbs;
     }
 }
 

@@ -1,3 +1,8 @@
+#main-content,
+.page-header {
+  display: none;
+}
+
 .main-container {
     padding: 0;
 }
