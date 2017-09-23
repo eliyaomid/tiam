@@ -2,7 +2,10 @@
 
 function front_page_callback() {
   
-  drupal_add_css(drupal_get_path('module', 'front_page') . '/css/front_page.css', ['type'=>'file', 'group'=>CSS_THEME]);
+  drupal_add_css(drupal_get_path('module', 'front_page') . '/css/front_page.css', 
+    ['type'=>'file', 'group'=>CSS_THEME]
+  );
+  drupal_set_title();
   return [];
 }
 
@@ -20,10 +23,33 @@ function front_page_menu() {
     'access arguments' => ['access content'],
     'type' => MENU_CALLBACK,
   ];
+  
+  $items['faq'] = [
+    'title' => 'سوالات متداول',
+    'page callback' => 'faq_page_callback',
+    'access arguments' => ['access content'],
+    'weight' => 2,
+    'menu_name' => 'main-menu',
+    'file' => 'front_page.pages.inc',
+  ];
 
   return $items;  
 }
 
+
+
+/**
+ * 
+ * Implements hook_theme()
+ */
+function front_page_theme() {
+  return [
+    'front_page_faq' => [
+      'variables' => ['items' => ''],
+      'template' => 'front_page_faq'
+    ]
+  ];
+}
 
 
 
