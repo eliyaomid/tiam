@@ -24,6 +24,7 @@ function contact_us_menu() {
     'title' => 'ارتباط با ما',
     'page callback' => 'contact_us_page_callback',
     'access arguments' => ['access content'],
+    'weight' => 5,
     'menu_name' => 'main-menu',
     'file' => 'contact_us.pages.inc',
   ];
