@@ -5,16 +5,18 @@ function merchant_list_page() {
   $header = [
     ['data' => 'شناسه', 'field' => 'id'],
     ['data' => 'نام فروشگاه', 'field' => 'shop_name'],
+    ['data' => 'نام مدیر', 'field' => 'manager_name'],
     ['data' => 'استان', 'field' => 'state'],
     ['data' => 'شهرستان', 'field' => 'city'],
   	['data' => 'صنف', 'field' => 'merchant_group'],
     ['data' => 'گروه', 'field' => 'merchant_sub_group'],
+    ['data' => 'درصد تخفیف', 'field' => 'discount_percent'],
     ['data' => 'شماره تماس'],
     ['data' => 'آدرس'],
     ['data' => 'جزئیات'],
   ];
   $merchant_list_query = db_select('tiam_merchant', 'tm')
-          ->fields('tm', ['id', 'shop_name', 'phone_number', 'address']);
+          ->fields('tm', ['id', 'shop_name', 'manager_name', 'phone_number', 'discount_percent', 'address']);
   $merchant_list_query->leftJoin('tiam_province', 'tps', 'tm.state=tps.id');
   $merchant_list_query->leftJoin('tiam_province', 'tpc', 'tm.city=tpc.id');
   $merchant_list_query->leftJoin('tiam_province', 'tpcr', 'tm.city_region=tpcr.id');
@@ -50,15 +52,18 @@ function merchant_list_page() {
     $rows[] = [
       ['data' => $merchant->id],
       ['data' => $merchant->shop_name],
+      ['data' => $merchant->manager_name],
       ['data' => $merchant->name],
       ['data' => $merchant->tpc_name],
     	['data' => $merchant->tmg_name],
       ['data' => $merchant->tmsg_name],
+      ['data' => $merchant->discount_percent],
       ['data' => $merchant->phone_number],
       ['data' => $merchant->address],
-      l('مشاهده جزئیات', url('merchant/'.$merchant->id, ['absolute' => true])),
+      l('مشاهده جزئیات', url('merchant/list/'.$merchant->id, ['absolute' => true])),
     ];
   }
+  drupal_add_css('#main-content,.page-header{display:none;}', ['type'=>'inline']);
   $page_output['merchant_list'] = [
     'table' => [
       '#theme' => 'table',
@@ -242,22 +247,33 @@ function _merchant_ajax_group_dropdown_options($key = 0) {
 function merchant_info_page($id) {
 
   drupal_add_css('.navbar{margin-bottom: 5px !important;} .main-container{padding:0 !important;}', ['type' => 'inline']);
-  $merchant = db_select('tiam_merchant', 'tm')
+  $merchant_query = db_select('tiam_merchant', 'tm')
           ->fields('tm')
-          ->condition('id', $id)
+          ->condition('tm.id', $id);
+  $merchant_query->leftJoin('tiam_province', 'tps', 'tm.state=tps.id');
+  $merchant_query->leftJoin('tiam_province', 'tpc', 'tm.city=tpc.id');
+  $merchant_query->leftJoin('tiam_merchant_group', 'tmg', 'tm.merchant_group=tmg.id');
+  $merchant_query->leftJoin('tiam_merchant_group', 'tmsg', 'tm.merchant_sub_group=tmsg.id');
+  $merchant = $merchant_query->fields('tps', ['id', 'name'])
+          ->fields('tpc', ['id', 'name'])
+          ->fields('tmg', ['id', 'name'])
+          ->fields('tmsg', ['id', 'name'])
           ->execute()
           ->fetch();
   $images = [];
   for ($index = 1; $index <= 6; $index++) {
     $feild_name  = "image_fid_$index";
-    $uri = file_load($merchant->$feild_name)->uri;
-    $images[] = [
-      'uri' => $uri,
-      'thumb' => $uri,    
-    ];
+    if($merchant->$feild_name) {
+      $uri = file_load($merchant->$feild_name)->uri;
+      $images[] = [
+        'uri' => $uri,
+        'thumb' => $uri,    
+      ];
+    }
   }
-  
+  drupal_add_css('#main-content,.page-header{display:none;}', ['type'=>'inline']);
   drupal_set_title($merchant->shop_name);
+
   return [
     'slider' => [
       '#theme' => 'thumbnail_navigator_with_arrows',
@@ -265,24 +281,51 @@ function merchant_info_page($id) {
       '#suffix' => '<br>',
     ],
     'merchant_info' => [
-      '#markup' => '
-        <div class="panel panel-default">
-          <div class="panel-body">
-            Basic panel example
+      '#markup' => "
+        <div class='panel panel-default'>
+          <div class='panel-heading'>$merchant->shop_name</div>
+          <div class='panel-body'>
+            <ul class='list-group'>
+              <li class='list-group-item'><strong>نام مدیر:</strong> $merchant->manager_name</li>
+              <li class='list-group-item'><strong>استان:</strong> $merchant->name</li>
+              <li class='list-group-item'><strong>شهرستان:</strong> $merchant->tpc_name</li>
+              <li class='list-group-item'><strong>صنف:</strong> $merchant->tmg_name</li>
+              <li class='list-group-item'><strong>گروه:</strong> $merchant->tmsg_name</li>
+              <li class='list-group-item'><strong>ویژگی ها:</strong> $merchant->feature</li>
+              <li class='list-group-item'><strong>توضیحات:</strong> $merchant->description</li>
+            </ul>
           </div>
-        </div>',
+        </div>",
       '#prefix' => '<div class="col-sm-8">',
       '#suffix' => '</div>',
     ],
     'merchant_location' => [
-      '#markup' => '
-        <div class="panel panel-default">
-          <div class="panel-body">
-            Basic panel example
+      '#markup' => "
+        <div class='panel panel-default'>
+          <div class='panel-body'>
+            <ul class='list-group'>
+              <li class='list-group-item'><strong>شماره تماس:</strong> $merchant->phone_number</li>
+              <li class='list-group-item'><strong>آدرس:</strong> $merchant->address</li>
+            </ul>
+            <input id='map_position_x' name='map_x' value='$merchant->map_x' type='hidden'>
+            <input id='map_position_y' name='map_y' value='$merchant->map_y' type='hidden'>
+            <div id='map_location' style='height: 200px; width: 100%;'></div>
           </div>
-        </div>',
+        </div>",
       '#prefix' => '<div class="col-sm-4">',
-      '#suffix' => '</div>',      
+      '#suffix' => '</div>',
+      '#attached' => [
+        'js' => [
+          ['data' => 'http://maps.googleapis.com/maps/api/js?key=AIzaSyBIOCfIlB3NTW2pPx4T7dajJ9HZV57_BCM', 'type' => 'external'],
+          ['data' => drupal_get_path('module', 'merchant').'/js/googlemap_page.js', 'type' => 'file'],
+        ],
+      ],
     ]
   ];
+}
+
+
+
+function merchant_login_page() {
+  return [];
 }

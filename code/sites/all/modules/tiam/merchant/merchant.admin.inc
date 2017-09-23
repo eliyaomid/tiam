@@ -4,17 +4,19 @@ function merchant_list() {
   
   $header = [
     ['data' => 'شناسه', 'field' => 'id'],
-    ['data' => 'نام فروشگاه', 'field' => 'shop_name'],
+    ['data' => 'نام فروشگاه', 'field' => 'manager_name'],
+    ['data' => 'نام مدیر', 'field' => 'shop_name'],
     ['data' => 'استان', 'field' => 'state'],
     ['data' => 'شهرستان', 'field' => 'city'],
     ['data' => 'صنف', 'field' => 'merchant_group'],
     ['data' => 'گروه', 'field' => 'merchant_sub_group'],
     ['data' => 'شماره تماس'],
+    ['data' => 'درصد تخفیف', 'field' => 'discount_percent'],
     ['data' => 'آدرس'],
     ['data' => 'جزئیات'],
   ];
   $merchant_list_query = db_select('tiam_merchant', 'tm')
-          ->fields('tm', ['id', 'shop_name', 'state', 'city', 'phone_number', 'address']);
+          ->fields('tm', ['id', 'shop_name', 'manager_name', 'state', 'city', 'phone_number', 'discount_percent', 'address']);
   $merchant_list_query->leftJoin('tiam_province', 'tps', 'tm.state=tps.id');
   $merchant_list_query->leftJoin('tiam_province', 'tpc', 'tm.city=tpc.id');
   $merchant_list_query->leftJoin('tiam_merchant_group', 'tmg', 'tm.merchant_group=tmg.id');
@@ -33,11 +35,13 @@ function merchant_list() {
     $rows[] = [
       ['data' => $merchant->id],
       ['data' => $merchant->shop_name],
+      ['data' => $merchant->manager_name],
       ['data' => $merchant->name],
       ['data' => $merchant->tpc_name],
       ['data' => $merchant->tmg_name],
       ['data' => $merchant->tmsg_name],
       ['data' => $merchant->phone_number],
+      ['data' => $merchant->discount_percent],
       ['data' => $merchant->address],
       l('ویرایش', url('admin/merchant/edit/'.$merchant->id, ['absolute' => true])),
     ];
@@ -93,14 +97,25 @@ function merchant_add_form($form, &$form_state, $id=0) {
       '#value' => $id,
     ];
   }
-  $selected_state = isset($form_state['values']['state']) ? $form_state['values']['state'] : key($all_state_option);
-  $selected_city = isset($form_state['values']['city']) ? $form_state['values']['city'] : 0;
-  $selected_group = isset($form_state['values']['merchant_group']) ? $form_state['values']['merchant_group'] : key($all_group_option);
+  $selected_state = isset($form_state['values']['state']) ? $form_state['values']['state'] :
+    (isset($merchant->state) ? $merchant->state : 0);
+  $selected_city = isset($form_state['values']['city']) ? $form_state['values']['city'] :
+    (isset($merchant->city) ? $merchant->city : 0);
+  $selected_group = isset($form_state['values']['merchant_group']) ? $form_state['values']['merchant_group'] : 
+    (isset($merchant->merchant_group) ? $merchant->merchant_group : 0);
   
   $form['shop_name'] = [
     '#type' => 'textfield',
     '#title' => 'نام فروشگاه',
     '#default_value' => isset($merchant->shop_name) ? $merchant->shop_name : '',
+    '#maxlength' => 200, 
+    '#required' => TRUE,
+  ];
+  
+  $form['manager_name'] = [
+    '#type' => 'textfield',
+    '#title' => 'نام مدیر',
+    '#default_value' => isset($merchant->manager_name) ? $merchant->manager_name : '',
     '#maxlength' => 200, 
     '#required' => TRUE,
   ];
@@ -139,12 +154,42 @@ function merchant_add_form($form, &$form_state, $id=0) {
   ];
   
   $form['merchant_area']['city_region'] = [
-  		'#type' => 'select',
-  		'#title' => 'ناحیه',
-  		'#prefix' => '<div id="dropdown-city-region-replace">',
-  		'#suffix' => '</div>',
-   		'#options' => _merchant_ajax_city_dropdown_options($selected_city),
-  		'#default_value' => isset($merchant->city_region) ? $merchant->city_region : 0,
+    '#type' => 'select',
+    '#title' => 'ناحیه',
+    '#prefix' => '<div id="dropdown-city-region-replace">',
+    '#suffix' => '</div>',
+    '#options' => _merchant_ajax_city_dropdown_options($selected_city),
+    '#default_value' => isset($merchant->city_region) ? $merchant->city_region : 0,
+  ];
+  
+  $form['merchant_area']['address'] = [
+    '#type' => 'textarea',
+    '#title' => 'آدرس',
+    '#default_value' => isset($merchant->address) ? $merchant->address : '',
+    '#required' => TRUE,
+  ];
+  
+  $form['merchant_area']['map_x'] = [
+    '#type' => 'hidden',
+    '#attributes' => ['id' => 'map_position_x'],
+    '#default_value' => isset($merchant->map_x) ? $merchant->map_x : 0,
+  ];
+  
+  $form['merchant_area']['map_y'] = [
+    '#type' => 'hidden',
+    '#attributes' => ['id' => 'map_position_y'],
+    '#default_value' => isset($merchant->map_y) ? $merchant->map_y : 0,
+  ];
+  
+  $form['merchant_area']['map_location'] = [
+  	'#type' => 'markup',
+  	'#markup' => '<div id="map_location" style="height: 200px; width: 100%;"></div>',
+    '#attached' => [
+      'js' => [
+        ['data' => 'http://maps.googleapis.com/maps/api/js?key=AIzaSyBIOCfIlB3NTW2pPx4T7dajJ9HZV57_BCM', 'type' => 'external'],
+        ['data' => drupal_get_path('module', 'merchant').'/js/googlemap_admin.js', 'type' => 'file'],
+      ],
+    ],
   ];
   
   $form['merchant_grouping'] = [
@@ -162,7 +207,7 @@ function merchant_add_form($form, &$form_state, $id=0) {
       'wrapper' => 'dropdown-group-replace',
     	'method' => 'replace',
     ],
-    '#default_value' => isset($merchant->group) ? $merchant->group : 0,
+    '#default_value' => isset($merchant->merchant_group) ? $merchant->merchant_group : 0,
   ];
 
   $form['merchant_grouping']['merchant_sub_group'] = [
@@ -171,7 +216,7 @@ function merchant_add_form($form, &$form_state, $id=0) {
     '#prefix' => '<div id="dropdown-group-replace">',
     '#suffix' => '</div>',
     '#options' => _merchant_ajax_group_dropdown_options($selected_group),
-    '#default_value' => isset($merchant->sub_group) ? $merchant->sub_group : 0,
+    '#default_value' => isset($merchant->merchant_sub_group) ? $merchant->merchant_sub_group : 0,
   ];
   
   $form['phone_number'] = [
@@ -182,23 +227,16 @@ function merchant_add_form($form, &$form_state, $id=0) {
     '#required' => TRUE,
   ];
   
-  $form['address'] = [
+  $form['discount_percent'] = [
+    '#type' => 'textfield',
+    '#title' => 'درصد تخفیف',
+    '#default_value' => isset($merchant->discount_percent) ? $merchant->discount_percent : 0,
+  ];
+
+  $form['feature'] = [
     '#type' => 'textarea',
-    '#title' => 'آدرس',
-    '#default_value' => isset($merchant->address) ? $merchant->address : '',
-    '#required' => TRUE,
-  ];
-  
-  $form['map_x'] = [
-    '#type' => 'hidden',
-    '#value' => 0,
-    '#default_value' => isset($merchant->map_x) ? $merchant->map_x : 0,
-  ];
-  
-  $form['map_y'] = [
-    '#type' => 'hidden',
-    '#value' => 0,
-    '#default_value' => isset($merchant->map_y) ? $merchant->map_y : 0,
+    '#title' => 'ویژگی ها',
+    '#default_value' => isset($merchant->feature) ? $merchant->feature : '',
   ];
   
   $form['description'] = [
@@ -289,14 +327,18 @@ function merchant_add_form_submit($form, &$form_state) {
     db_update('tiam_merchant')
     				->fields([
               'shop_name' => $form_values['shop_name'],
+              'manager_name' => $form_values['manager_name'],
               'state' => $form_values['state'],
               'city' => $form_values['city'],
+              'city_region' => $form_values['city_region'],
             	'merchant_group' => $form_values['merchant_group'],
             	'merchant_sub_group' => $form_values['merchant_sub_group'],
               'phone_number' => $form_values['phone_number'],
               'address' => $form_values['address'],
               'map_x' => $form_values['map_x'],
               'map_y' => $form_values['map_y'],
+              'discount_percent' => $form_values['discount_percent'],
+              'feature' => $form_values['feature'],
               'description' => $form_values['description'] ? $form_values['description'] : '',
               'image_fid_1' => $form_values['image_fid_1'],
               'image_fid_2' => $form_values['image_fid_2'],
@@ -312,14 +354,18 @@ function merchant_add_form_submit($form, &$form_state) {
     db_insert('tiam_merchant')
             ->fields([
               'shop_name' => $form_values['shop_name'],
+              'manager_name' => $form_values['manager_name'],
               'state' => $form_values['state'],
               'city' => $form_values['city'],
+              'city_region' => $form_values['city_region'],
             	'merchant_group' => $form_values['merchant_group'],
             	'merchant_sub_group' => $form_values['merchant_sub_group'],
               'phone_number' => $form_values['phone_number'],
               'address' => $form_values['address'],
               'map_x' => $form_values['map_x'],
               'map_y' => $form_values['map_y'],
+              'discount_percent' => $form_values['discount_percent'],
+              'feature' => $form_values['feature'],
               'description' => $form_values['description'] ? $form_values['description'] : '',
               'image_fid_1' => $form_values['image_fid_1'],
               'image_fid_2' => $form_values['image_fid_2'],
