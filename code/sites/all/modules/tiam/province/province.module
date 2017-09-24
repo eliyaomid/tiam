@@ -5,7 +5,7 @@
  */
 function province_permission() {
   return [
-    'administer merchant' => [
+    'administer province' => [
       'title' => t('Administer province module'),
     ],
   ];
