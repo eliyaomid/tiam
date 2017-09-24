@@ -1,0 +1,43 @@
+<?php
+
+/**
+ * Implements hook_permission().
+ */
+function transaction_permission() {
+  return [
+    'administer transaction user' => [
+      'title' => t('Administer user transaction module'),
+    ],
+	'administer transaction merchant' => [
+      'title' => t('Administer merchant transaction module'),
+    ],
+  ];
+}
+
+
+
+/**
+ * Implements hook_menu()
+ */
+function transaction_menu() {
+
+  $items = [];
+  $items['admin/transaction/user'] = [
+    'title' => 'سابقه تراکنش ها',
+    'description' => 'نمایش لیست تمامی تراکنش ها',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => ['user_transaction_list_form'],
+    'access arguments' => ['administer transaction user'],
+    'file' => 'transaction.admin.inc',
+  ];
+  $items['admin/transaction/merchant'] = [
+    'title' => 'سابقه تراکنش دارندگان کارت',
+    'description' => 'نمایش لیست تمامی تراکنش های دارندگان کارت',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => ['merchant_transaction_list_form'],
+    'access arguments' => ['administer transaction merchant'],
+    'file' => 'transaction.admin.inc',
+  ];
+  
+  return $items;
+}

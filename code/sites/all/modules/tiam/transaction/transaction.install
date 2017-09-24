@@ -1,0 +1,77 @@
+<?php
+function transaction_schema() {
+
+  $schema = [];
+  
+  $schema['tiam_transaction_merchant'] = [
+    'description' => 'TODO: please describe this table!',
+    'fields' => [
+      'id' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'transaction_date' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'datetime',
+        'not null' => TRUE,
+      ],
+      'transaction_amount' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'float',
+        'not null' => TRUE,
+      ],
+      'cart_number' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'varchar',
+        'length' => '16',
+        'not null' => TRUE,
+      ],
+      'customer_name' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'varchar',
+        'length' => '30',
+        'not null' => TRUE,
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+
+  $schema['tiam_transaction_user'] = [
+    'description' => 'TODO: please describe this table!',
+    'fields' => [
+      'id' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'transaction_date' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'datetime',
+        'not null' => TRUE,
+      ],
+      'transaction_amount' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'float',
+        'not null' => TRUE,
+      ],
+      'merchant_id' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'transaction_discount_percent' => [
+        'description' => 'TODO: please describe this field!',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+
+  return $schema;
+}
