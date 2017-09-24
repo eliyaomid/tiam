@@ -327,5 +327,7 @@ function merchant_info_page($id) {
 
 
 function merchant_login_page() {
+  
+  drupal_add_css('#main-content,.page-header{display:none;}', ['type'=>'inline']);
   return [];
 }
