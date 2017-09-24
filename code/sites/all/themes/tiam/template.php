@@ -98,3 +98,11 @@ function tiam_form_alter(&$form, &$form_state, $form_id) {
             $form['search_block_form']['#attributes'] = ['onblur' => "if (this.value == '') {this.value = '{$form_default}';}", 'onfocus' => "if (this.value == '{$form_default}') {this.value = '';}" ];
     }
 }
+
+
+/**
+ * Overrides theme_menu_tree() for book module.
+ */
+function tiam_menu_tree__sub_menu(&$variables) {
+  return '<ul class="dropdown-menu" role="menu">' . $variables['tree'] . '</ul>';
+}
