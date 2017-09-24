@@ -4,11 +4,11 @@
  * Implements hook_permission()
  */
 function merchant_permission() {
-  return array(
+  return [
     'administer merchant' => [
       'title' => 'مدیریت پذیرندگان',
     ],
-  );
+  ];
 }
 
 
@@ -86,15 +86,15 @@ function merchant_menu() {
     'type' => MENU_CALLBACK,
   ];
   
-  $items['admin/merchant/merchant_group/add'] = [
-  		'title' => 'افزودن صنف',
-  		'description' => 'افزودن یک صنف',
-  		'page callback' => 'drupal_get_form',
-  		'page arguments' => ['merchant_group_add_form'],
-  		'access arguments' => ['administer merchant'],
-  		'file' => 'merchant.admin.inc',
-  		'type' => MENU_LOCAL_ACTION,
-  ];
+//  $items['admin/merchant/merchant_group/add'] = [
+//  		'title' => 'افزودن صنف',
+//  		'description' => 'افزودن یک صنف',
+//  		'page callback' => 'drupal_get_form',
+//  		'page arguments' => ['merchant_group_add_form'],
+//  		'access arguments' => ['administer merchant'],
+//  		'file' => 'merchant.admin.inc',
+//  		'type' => MENU_LOCAL_ACTION,
+//  ];
 
   return $items;
 }
