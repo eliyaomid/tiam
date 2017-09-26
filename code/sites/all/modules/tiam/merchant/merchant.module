@@ -238,7 +238,7 @@ function merchant_list_latest() {
       ['data' => $merchant->tmsg_name],
       ['data' => $merchant->phone_number],
       ['data' => $merchant->address],
-      l('مشاهده جزئیات', url('merchant/'.$merchant->id)),
+      l('مشاهده جزئیات', url('merchant/list/'.$merchant->id, ['absolute'=>true])),
     ];
   }
   $page_output['merchant_list'] = [
