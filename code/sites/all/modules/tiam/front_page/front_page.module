@@ -98,7 +98,7 @@ function front_page_block_view($delta = '') {
                   'attributes' => ['class' => ['telegram']]
                 ]),
                 'https://t.me/tickethall',
-                ['html'=>TRUE, 'attributes' => ['class' => ['sosial-icon']]]
+                ['html'=>TRUE, 'attributes' => ['class' => ['sosial-icon'], 'target' => '_blank']]
               ).
               l(
                 theme_image([
@@ -106,7 +106,7 @@ function front_page_block_view($delta = '') {
                   'attributes' => ['class' => ['instagram']]
                 ]),
                 'https://www.instagram.com/eliyaomid/',
-                ['html'=>TRUE, 'attributes' => ['class' => ['sosial-icon']]]
+                ['html'=>TRUE, 'attributes' => ['class' => ['sosial-icon'], 'target' => '_blank']]
               ),
           '#prefix' => '<div class="front-page-surprised">',
           '#suffix' => '</div>',
@@ -118,22 +118,22 @@ function front_page_block_view($delta = '') {
         'subject' => 'بانک ها و شرکت های همکار',
         'content' => [
           '#markup' =>
-              l(
-                theme_image([
-                  'path' => drupal_get_path('module', 'front_page').'/images/partners/small-logo1.png',
-                  'attributes' => ['class' => ['small-logo1']]
-                ]),
-                '#',
-                ['html'=>TRUE, 'attributes' => ['class' => ['partners']]]
-              ).
-              l(
-                theme_image([
-                  'path' => drupal_get_path('module', 'front_page').'/images/partners/small-logo2.png',
-                  'attributes' => ['class' => ['small-logo2']]
-                ]),
-                '#',
-                ['html'=>TRUE, 'attributes' => ['class' => ['partners']]]
-              ).
+//              l(
+//                theme_image([
+//                  'path' => drupal_get_path('module', 'front_page').'/images/partners/small-logo1.png',
+//                  'attributes' => ['class' => ['small-logo1']]
+//                ]),
+//                '#',
+//                ['html'=>TRUE, 'attributes' => ['class' => ['partners']]]
+//              ).
+//              l(
+//                theme_image([
+//                  'path' => drupal_get_path('module', 'front_page').'/images/partners/small-logo2.png',
+//                  'attributes' => ['class' => ['small-logo2']]
+//                ]),
+//                '#',
+//                ['html'=>TRUE, 'attributes' => ['class' => ['partners']]]
+//              ).
               l(
                 theme_image([
                   'path' => drupal_get_path('module', 'front_page').'/images/partners/small-logo3.png',
@@ -141,15 +141,15 @@ function front_page_block_view($delta = '') {
                 ]),
                 '#',
                 ['html'=>TRUE, 'attributes' => ['class' => ['partners']]]
-              ).
-              l(
-                theme_image([
-                  'path' => drupal_get_path('module', 'front_page').'/images/partners/small-logo4.png',
-                  'attributes' => ['class' => ['small-logo4']]
-                ]),
-                '#',
-                ['html'=>TRUE, 'attributes' => ['class' => ['partners']]]
-              ),
+              ),//.
+//              l(
+//                theme_image([
+//                  'path' => drupal_get_path('module', 'front_page').'/images/partners/small-logo4.png',
+//                  'attributes' => ['class' => ['small-logo4']]
+//                ]),
+//                '#',
+//                ['html'=>TRUE, 'attributes' => ['class' => ['partners']]]
+//              ),
           '#prefix' => '<div class="front-page-partners">',
           '#suffix' => '</div>',
         ]

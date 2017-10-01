@@ -58,87 +58,10 @@
 }
 
 #IranMap .list{
-    display: block;
-    float: right;
-    width: 50%;
-}
-#IranMap .list ul{
-    padding: 0;
-}
-#IranMap .list>ul{
-    margin-left: 10px;
-}
-#IranMap .list li{
-    list-style: none;
-}
-#IranMap .list span{
-    background: #242424;
-    color: #ecf0f1;
-    display: block;
-    margin: 0 2px;
-    padding: 0 8px;
-    line-height: 26px;
-    margin-top: 10px;
-    margin-bottom: 2px;
-}
-#IranMap .list li ul li{
-    display: block;
-    float: right;
-    width: 33.33333333333333%;
-}
-#IranMap .list li ul li a{
-    background: #34495e;
-    color: #ecf0f1;
-    display: block;
-    padding: 0 8px;
-    line-height: 26px;
-    margin: 2px 2px;
-    text-decoration: none;
-}
-#IranMap .list li ul li a:hover, #IranMap .list li ul li a.hover{
-    background: #c33a2c;
-}
-#IranMap .list ul:before, #IranMap .list ul:after{
-    display: table;
-    content: " ";
-}
-#IranMap .list ul, #IranMap .list ul:after{
-    clear: both;
+    display: none;
 }
 
 #IranMap .city{
     clear: both;
     padding: 10px 0;
-}
-
-@media(max-width: 930px){
-    #IranMap .list{
-        width: 50%;
-    }
-}
-@media(max-width: 745px){
-    #IranMap .list li ul li{
-        width: 50%;
-    }
-}
-@media(max-width: 515px){
-    #IranMap .list, #IranMap .map{
-        width: 100%;
-    }
-    #IranMap .list li ul li{
-        width: 33.33333333333333%;
-    }
-    #IranMap .list li ul li a{
-        font-size: 10px !important;
-    }
-}
-@media(max-width: 515px){
-    #IranMap .list li ul li{
-        width: 50%;
-    }
-}
-@media(max-width: 250px){
-    #IranMap .list li ul li{
-        width: 100%;
-    }
 }

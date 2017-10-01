@@ -32,7 +32,7 @@
       function ScaleSlider() {
           var parentWidth = jssor_slider1.$Elmt.parentNode.clientWidth;
           if (parentWidth)
-              jssor_slider1.$ScaleWidth(Math.min(parentWidth, 2000));
+              jssor_slider1.$ScaleWidth(Math.min(parentWidth, 600));
           else
               $Jssor$.$Delay(ScaleSlider, 30);
       }
@@ -46,7 +46,7 @@
   };
 </script>
 
-<div id="slider1_container" style="position: relative; width: 2000px;  height: 480px; overflow: hidden;">
+<div id="slider1_container" style="position: relative; width: 700px;  height: 350px; overflow: hidden;">
 
   <!-- Loading Screen -->
   <div data-u="loading" class="jssorl-009-spin" style="position:absolute;top:0px;left:0px;width:100%;height:100%;text-align:center;background-color:rgba(0,0,0,0.7);">
@@ -54,7 +54,7 @@
   </div>
 
   <!-- Slides Container -->
-  <div u="slides" style="position: absolute; left: 0px; top: 0px; width: 2000px; height: 480px; overflow: hidden;">
+  <div u="slides" style="position: absolute; left: 0px; top: 0px; width: 700px; height: 350px; overflow: hidden;">
       <?php foreach ($images as $image): ?>
       <div>
         <?php echo theme_image(['path'=>$image['uri'], 'attributes' => ['data-u'=> 'image']]);?>
@@ -64,100 +64,104 @@
   </div>
   <!--#region Thumbnail Navigator Skin Begin -->
   <style>
-      /* jssor slider loading skin spin css */
-      .jssorl-009-spin img {
-          animation-name: jssorl-009-spin;
-          animation-duration: 1.6s;
-          animation-iteration-count: infinite;
-          animation-timing-function: linear;
-      }
+    /* jssor slider loading skin spin css */
+    .jssorl-009-spin img {
+        animation-name: jssorl-009-spin;
+        animation-duration: 1.6s;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+    }
 
-      @keyframes jssorl-009-spin {
-          from {
-              transform: rotate(0deg);
-          }
+    @keyframes jssorl-009-spin {
+        from {
+            transform: rotate(0deg);
+        }
 
-          to {
-              transform: rotate(360deg);
-          }
-      }
+        to {
+            transform: rotate(360deg);
+        }
+    }
 
-      /* jssor slider thumbnail navigator skin 07 css */
-      /*
-      .jssort07 .p            (normal)
-      .jssort07 .p:hover      (normal mouseover)
-      .jssort07 .pav          (active)
-      .jssort07 .pav:hover    (active mouseover)
-      .jssort07 .pdn          (mousedown)
-      */
-      .jssort07 {
-          position: absolute;
-          /* size of thumbnail navigator container */
-          width: 800px;
-          height: 100px;
-      }
+    /* jssor slider thumbnail navigator skin 07 css */
+    /*
+    .jssort07 .p            (normal)
+    .jssort07 .p:hover      (normal mouseover)
+    .jssort07 .pav          (active)
+    .jssort07 .pav:hover    (active mouseover)
+    .jssort07 .pdn          (mousedown)
+    */
+    .jssort07 {
+        position: absolute;
+        /* size of thumbnail navigator container */
+        width: 800px;
+        height: 100px;
+    }
 
-          .jssort07 .p {
-              position: absolute;
-              top: 0;
-              left: 0;
-              width: 99px;
-              height: 66px;
-          }
+        .jssort07 .p {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 99px;
+            height: 66px;
+        }
 
-          .jssort07 .i {
-              position: absolute;
-              top: 0px;
-              left: 0px;
-              width: 99px;
-              height: 66px;
-              filter: alpha(opacity=80);
-              opacity: .8;
-          }
+        .jssort07 .i {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 99px;
+            height: 66px;
+            filter: alpha(opacity=80);
+            opacity: .8;
+        }
 
-          .jssort07 .p:hover .i, .jssort07 .pav .i {
-              filter: alpha(opacity=100);
-              opacity: 1;
-          }
+        .jssort07 .p:hover .i, .jssort07 .pav .i {
+            filter: alpha(opacity=100);
+            opacity: 1;
+        }
 
-          .jssort07 .o {
-              position: absolute;
-              top: 0px;
-              left: 0px;
-              width: 97px;
-              height: 64px;
-              border: 1px solid #000;
-              box-sizing: content-box;
-              transition: border-color .6s;
-              -moz-transition: border-color .6s;
-              -webkit-transition: border-color .6s;
-              -o-transition: border-color .6s;
-          }
+        .jssort07 .o {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 97px;
+            height: 64px;
+            border: 1px solid #000;
+            box-sizing: content-box;
+            transition: border-color .6s;
+            -moz-transition: border-color .6s;
+            -webkit-transition: border-color .6s;
+            -o-transition: border-color .6s;
+        }
 
-          .jssort07 .pav .o {
-              border-color: #0099ff;
-          }
+        .jssort07 .pav .o {
+            border-color: #0099ff;
+        }
 
-          .jssort07 .p:hover .o {
-              border-color: #fff;
-              transition: none;
-              -moz-transition: none;
-              -webkit-transition: none;
-              -o-transition: none;
-          }
+        .jssort07 .p:hover .o {
+            border-color: #fff;
+            transition: none;
+            -moz-transition: none;
+            -webkit-transition: none;
+            -o-transition: none;
+        }
 
-          .jssort07 .p.pdn .o {
-              border-color: #0099ff;
-          }
+        .jssort07 .p.pdn .o {
+            border-color: #0099ff;
+        }
 
-          * html .jssort07 .o {
-              /* ie quirks mode adjust */
-              width /**/: 99px;
-              height /**/: 66px;
-          }
+        * html .jssort07 .o {
+            /* ie quirks mode adjust */
+            width /**/: 99px;
+            height /**/: 66px;
+        }
+        #slider1_container {
+          margin-left: auto;
+          margin-right: auto;
+        }
   </style>
   <!-- thumbnail navigator container -->
-  <div u="thumbnavigator" class="jssort07" style="width: 2000px; height: 100px; left: 0px; bottom: 0px;">
+  <div u="thumbnavigator" class="jssort07" style="width: 700px; height: 100px; left: 0px; bottom: 0px;">
       <!-- Thumbnail Item Skin Begin -->
       <div u="slides" style="cursor: default;">
           <div u="prototype" class="p">

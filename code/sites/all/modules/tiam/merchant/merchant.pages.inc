@@ -210,7 +210,7 @@ function merchant_list_filter_form_submit($form, &$form_state) {
   if($form_values['merchant_group']) $query['merchant_group'] = $form_values['merchant_group'];
   if($form_values['merchant_sub_group']) $query['merchant_sub_group'] = $form_values['merchant_sub_group'];
 
-  $form_state['redirect'] = ['merchant', ['query' => $query]];
+  $form_state['redirect'] = ['merchant/list', ['query' => $query]];
 }
 
 

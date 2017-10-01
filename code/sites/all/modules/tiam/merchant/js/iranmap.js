@@ -22,9 +22,44 @@ jQuery(function() {
         }
     }
     resposive();
-    
+
     jQuery('#IranMap .map .province path').click(function() {
-        var province = jQuery(this).attr('class');
-        window.location.replace(Drupal.settings.basePath+'merchant?state='+province);
+        var className = jQuery(this).attr('class');
+        var parrentClassName = jQuery(this).parent('g').attr('class');
+        var itemID = jQuery('#IranMap .list .' + parrentClassName + ' .' + className + ' a').attr('href');
+        window.location.replace(Drupal.settings.basePath+'merchant/list?state='+itemID);
+    });
+
+    jQuery('#IranMap').mousemove(function(e) {
+        var posx = 0;
+        var posy = 0;
+        if (!e)
+            var e = window.event;
+        if (e.pageX || e.pageY) {
+            posx = e.pageX;
+            posy = e.pageY;
+        } else if (e.clientX || e.clientY) {
+            posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+            posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+        }
+        if (jQuery('#IranMap .show-title').html()) {
+            var offset = jQuery(this).offset();
+            var x = (posx - offset.left + 25) + 'px';
+            var y = (posy - offset.top - 5) + 'px';
+            jQuery('#IranMap .show-title').css({'left': x, 'top': y});
+        }
+    });
+
+    jQuery('#IranMap svg g path').hover(function() {
+        var className = jQuery(this).attr('class');
+        var parrentClassName = jQuery(this).parent('g').attr('class');
+        var itemName = jQuery('#IranMap .list .' + parrentClassName + ' .' + className + ' a').html();
+        if (itemName) {
+            jQuery('#IranMap .list .' + parrentClassName + ' .' + className + ' a').addClass('hover');
+            jQuery('#IranMap .show-title').html(itemName).css({'display': 'block'});
+        }
+    }, function() {
+        jQuery('#IranMap .list a').removeClass('hover');
+        jQuery('#IranMap .show-title').html('').css({'display': 'none'});
     });
 });
