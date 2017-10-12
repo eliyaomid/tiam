@@ -326,8 +326,111 @@ function merchant_info_page($id) {
 
 
 
-function merchant_login_page() {
+function merchant_login_page_form($form, &$form_state) {
+  $form = [
+    '#prefix' => '<div class="container"><div id="merchant-login-form" class="col-sm-4 clearfix">',
+    '#suffix' => '</div></div><br><br>',
+  ];
+  
+  $form['name'] = [
+    '#type' => 'textfield',
+    '#title' => 'شماره موبایل',
+    '#maxlength' => 12, 
+    '#required' => TRUE,
+  ];
+  $form['pass'] = [
+    '#type' => 'password',
+    '#title' => 'کلمه عبور',
+    '#maxlength' => 30, 
+    '#required' => TRUE,
+  ];
+  $form['submit'] = [
+    '#type' => 'submit',
+    '#value' => 'ورود',
+  ];
+  $form['#validate'] = user_login_default_validators();
+  
+  return $form;
+}
+
+
+
+function merchant_login_page_form_submit($form, &$form_state) {
+  global $user;
+  $user = user_load($form_state['uid']);
+  if(in_array('cart_holder', array_values($user->roles))) {
+    $form_state['redirect'] = 'admin/transaction/user';
+  }
+  elseif(in_array('merchant', array_values($user->roles))) {
+    $form_state['redirect'] = 'admin/transaction/merchant';
+  }
+  user_login_finalize($form_state);  
+}
+
+
+
+function user_register_cart_form($form, &$form_state) {
+  $form = [
+    '#prefix' => '<div class="container"><div id="register-cart-form" class="col-sm-4 clearfix">',
+    '#suffix' => '</div></div><br><br>',
+  ];
+  
+  $form['user_name'] = [
+    '#type' => 'textfield',
+    '#title' => 'شماره موبایل',
+    '#maxlength' => 12, 
+    '#required' => TRUE,
+  ];
+  $form['cart_nubmer'] = [
+    '#type' => 'textfield',
+    '#title' => 'شماره کارت',
+    '#maxlength' => 16, 
+    '#required' => TRUE,
+  ];
+
+  $form['submit'] = [
+    '#type' => 'submit',
+    '#value' => 'ثبت کارت',
+  ];
+  
+  return $form;
+}
+
+
+
+
+function user_register_cart_form_submit($form, &$form_state) {
+  
+}
+
+
+
+function reset_password_form($form, &$form_state) {
   
   drupal_add_css('#main-content,.page-header{display:none;}', ['type'=>'inline']);
-  return [];
+  drupal_set_title('درخواست گذرواژه جدید');
+  $form = [
+    '#prefix' => '<div class="container"><div id="reset-password-form" class="col-sm-4 clearfix">',
+    '#suffix' => '</div></div><br><br>',
+  ];
+  
+  $form['user_name'] = [
+    '#type' => 'textfield',
+    '#title' => 'شماره موبایل',
+    '#maxlength' => 12, 
+    '#required' => TRUE,
+  ];
+
+  $form['submit'] = [
+    '#type' => 'submit',
+    '#value' => 'گذرواژه جدید را ارسال کن',
+  ];
+  
+  return $form;  
+}
+
+
+
+function reset_password_form_submit($form, &$form_state) {
+  
 }

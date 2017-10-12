@@ -78,7 +78,8 @@ function merchant_menu() {
     
   $items['merchant/login'] = [
     'title' => 'ورود پذیرندگان',
-    'page callback' => 'merchant_login_page',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => ['merchant_login_page_form'],
     'access arguments' => ['access content'],
     'type' => MENU_NORMAL_ITEM,
     'weight' => 1,
@@ -86,23 +87,24 @@ function merchant_menu() {
     'file' => 'merchant.pages.inc',
   ];
 
-  $items['merchant/login/register'] = array(
-    'title' => 'Create new account',
+  $items['registration-cart'] = [
+    'title' => 'ثبت کارت',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('user_register_form'),
-    'access callback' => 'user_register_access',
-    'type' => MENU_LOCAL_TASK,
-  );
+    'page arguments' => ['user_register_cart_form'],
+    'access arguments' => ['access content'],
+    'weight' => 7,
+    'menu_name' => 'main-menu',
+    'file' => 'merchant.pages.inc',
+  ];
 
-  $items['merchant/login/password'] = array(
+  $items['merchant/login/reset_password'] = [
     'title' => 'Request new password',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('user_pass'),
+    'page arguments' => ['reset_password_form'],
     'access callback' => TRUE,
-    'type' => MENU_LOCAL_TASK,
-    'file' => 'user.pages.inc',
-    'file path' => drupal_get_path('module', 'user'),
-  );
+    'type' => MENU_LOCAL_ACTION,
+    'file' => 'merchant.pages.inc',
+  ];
 //  $items['admin/merchant/merchant_group/add'] = [
 //  		'title' => 'افزودن صنف',
 //  		'description' => 'افزودن یک صنف',
