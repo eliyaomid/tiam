@@ -364,6 +364,9 @@ function merchant_login_page_form_submit($form, &$form_state) {
   elseif(in_array('merchant', array_values($user->roles))) {
     $form_state['redirect'] = 'admin/transaction/merchant';
   }
+  else {
+    $form_state['redirect'] = 'admin';    
+  }
   user_login_finalize($form_state);  
 }
 
@@ -375,6 +378,12 @@ function user_register_cart_form($form, &$form_state) {
     '#suffix' => '</div></div><br><br>',
   ];
   
+  $form['name'] = [
+    '#type' => 'textfield',
+    '#title' => 'نام و نام خانوادگی',
+    '#maxlength' => 50, 
+    '#required' => TRUE,
+  ];
   $form['user_name'] = [
     '#type' => 'textfield',
     '#title' => 'شماره موبایل',
