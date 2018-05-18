@@ -422,3 +422,33 @@ function merchant_group_add_form($form, &$form_state, $id=0) {
   
   return $form;  
 }
+
+
+
+function admin_user_register_cart_form($form, &$form_state) {
+  $form = [
+//    '#prefix' => '<div class="container"><div id="register-cart-form" class="col-sm-4 clearfix">',
+//    '#suffix' => '</div></div><br><br>',
+  ];
+  
+  $form['cart_nubmer'] = [
+    '#type' => 'textfield',
+    '#title' => 'شماره کارت',
+    '#maxlength' => 16, 
+    '#required' => TRUE,
+  ];
+
+  $form['submit'] = [
+    '#type' => 'submit',
+    '#value' => 'ثبت کارت',
+  ];
+  
+  return $form;
+}
+
+
+
+
+function admin_user_register_cart_form_submit($form, &$form_state) {
+  
+}

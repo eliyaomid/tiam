@@ -32,6 +32,15 @@ function front_page_menu() {
     'menu_name' => 'main-menu',
     'file' => 'front_page.pages.inc',
   ];
+  
+  $items['download-mobile-application'] = [
+    'title' => 'دانلود اپلیکیشن موبایل',
+    'page callback' => 'download_mobile_application',
+    'access arguments' => ['access content'],
+    'weight' => 8,
+    'menu_name' => 'main-menu',
+    'file' => 'front_page.pages.inc',
+  ];
 
   return $items;  
 }
@@ -89,7 +98,7 @@ function front_page_block_view($delta = '') {
   switch ($delta) {
     case 'front_page_surprised':
       $block = [
-        'subject' => 'عضویت در سوپرایزونه',
+        'subject' => 'عضویت در سورپرایزونه',
         'content' => [
           '#markup' =>
               l(
@@ -97,7 +106,7 @@ function front_page_block_view($delta = '') {
                   'path' => drupal_get_path('module', 'front_page').'/images/sosial/telegram.png',
                   'attributes' => ['class' => ['telegram']]
                 ]),
-                'https://t.me/tickethall',
+                'http://t.me/eghtesademan',
                 ['html'=>TRUE, 'attributes' => ['class' => ['sosial-icon'], 'target' => '_blank']]
               ).
               l(
@@ -105,7 +114,7 @@ function front_page_block_view($delta = '') {
                   'path' => drupal_get_path('module', 'front_page').'/images/sosial/instagram.png',
                   'attributes' => ['class' => ['instagram']]
                 ]),
-                'https://www.instagram.com/eliyaomid/',
+                'https://www.instagram.com/eghtesademan/',
                 ['html'=>TRUE, 'attributes' => ['class' => ['sosial-icon'], 'target' => '_blank']]
               ),
           '#prefix' => '<div class="front-page-surprised">',

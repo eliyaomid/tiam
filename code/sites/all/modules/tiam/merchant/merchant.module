@@ -138,6 +138,15 @@ function merchant_menu() {
     'file' => 'merchant.pages.inc',
   ];
   
+  $items['admin/cart-holder/registration-cart'] = [
+    'title' => 'ثبت کارت جدید',
+    'description' => 'ثبت یک کارت جدید',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => ['admin_user_register_cart_form'],
+    'access arguments' => ['administer'],
+    'file' => 'merchant.admin.inc',
+  ];
+  
 //  $items['admin/merchant/merchant_group/add'] = [
 //  		'title' => 'افزودن صنف',
 //  		'description' => 'افزودن یک صنف',
